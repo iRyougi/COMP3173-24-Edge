@@ -1,4 +1,5 @@
 # parser.py
+from lexer import Lexer
 
 class ASTNode:
     def __init__(self, node_type, children=None, value=None):

@@ -4,6 +4,7 @@ from lexer import Lexer
 from parser import Parser
 from semantic import SemanticAnalyzer
 from evaluator import Evaluator
+from slr_parser import SLRParser
 import sys
 import json
 
@@ -19,12 +20,18 @@ if __name__ == '__main__':
         lexer = Lexer(source_code)
         tokens = lexer.tokens()
 
-        # 将标记转换为字典列表
+        # 输出词法分析结果
         tokens_output = [token.to_dict() for token in tokens]
-
-        # 写入 lexer_out.json
         with open('lexer_out.json', 'w') as outfile:
             json.dump(tokens_output, outfile, indent=4)
+
+        # 初始化文法和分析表
+        grammar = Grammar()
+        parsing_table = ParsingTable(action_table, goto_table)  # 需要实际的表数据
+
+        # 语法分析
+        parser = SLRParser(parsing_table, grammar)
+        parser.parse(tokens)
 
 
     # 语义分析
