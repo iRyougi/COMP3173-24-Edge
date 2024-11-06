@@ -1,0 +1,14 @@
+{
+    "type": "Program",
+    "body": [
+      {
+        "type": "VariableDeclaration",
+        "identifier": "A",
+        "varType": "int"
+      },
+      {
+        
+      }
+    ]
+  }
+  

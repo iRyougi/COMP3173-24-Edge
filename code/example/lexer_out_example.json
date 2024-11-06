@@ -1,0 +1,8 @@
+[
+    {"token": "LET", "lexeme": "let"},
+    {"token": "IDENTIFIER", "lexeme": "A"},
+    {"token": "BE", "lexeme": "be"},
+    {"token": "INT", "lexeme": "int"}
+    
+  ]
+  
