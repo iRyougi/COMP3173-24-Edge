@@ -1,6 +1,9 @@
 # main.py
 
 from lexer import Lexer
+from parser import Parser
+from semantic import SemanticAnalyzer
+from evaluator import Evaluator
 import sys
 import json
 
