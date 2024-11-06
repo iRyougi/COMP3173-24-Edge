@@ -1,5 +1,6 @@
 # semantic.py
 
+
 class SemanticAnalyzer:
     def __init__(self, ast):
         self.ast = ast
@@ -9,7 +10,7 @@ class SemanticAnalyzer:
         self.visit(self.ast)
 
     def visit(self, node):
-        method_name = 'visit_' + node.type
+        method_name = "visit_" + node.type
         visitor = getattr(self, method_name, self.generic_visit)
         return visitor(node)
 
@@ -22,11 +23,11 @@ class SemanticAnalyzer:
             self.visit(stmt)
 
     def visit_VariableDeclaration(self, node):
-        var_name = node.value['name']
-        var_type = node.value['type']
+        var_name = node.value["name"]
+        var_type = node.value["type"]
         if var_name in self.symbol_table:
             raise Exception(f"Variable {var_name} already declared")
-        self.symbol_table[var_name] = {'type': var_type}
+        self.symbol_table[var_name] = {"type": var_type}
 
     def visit_ShowStatement(self, node):
         expr = node.children[0]
@@ -37,7 +38,7 @@ class SemanticAnalyzer:
         var_name = node.value
         if var_name not in self.symbol_table:
             raise Exception(f"Undefined variable {var_name}")
-        return self.symbol_table[var_name]['type']
+        return self.symbol_table[var_name]["type"]
 
     def visit_Number(self, node):
-        return 'int'
+        return "int"
