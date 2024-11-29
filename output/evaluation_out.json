@@ -1,0 +1,79 @@
+{
+ "name": "S",
+ "value": "9",
+ "children": [
+  {
+   "name": "C",
+   "value": "9",
+   "children": [
+    {
+     "token": "show",
+     "lexeme": "show",
+     "value": "void"
+    },
+    {
+     "name": "A",
+     "value": "9",
+     "children": [
+      {
+       "name": "E",
+       "value": "9",
+       "children": [
+        {
+         "name": "E",
+         "value": "3",
+         "children": [
+          {
+           "name": "E'",
+           "value": "3",
+           "children": [
+            {
+             "name": "E''",
+             "value": "3",
+             "children": [
+              {
+               "token": "num",
+               "lexeme": "3",
+               "value": "3"
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "token": "+",
+         "lexeme": "+",
+         "value": "void"
+        },
+        {
+         "name": "E'",
+         "value": "6",
+         "children": [
+          {
+           "name": "E''",
+           "value": "6",
+           "children": [
+            {
+             "token": "num",
+             "lexeme": "6",
+             "value": "6"
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "token": ".",
+   "lexeme": ".",
+   "value": "void"
+  }
+ ]
+}

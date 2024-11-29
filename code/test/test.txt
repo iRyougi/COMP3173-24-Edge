@@ -1,3 +1,0 @@
-let A be int;
-let B be set;
-show A + 5;
