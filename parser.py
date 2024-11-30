@@ -1,176 +1,223 @@
 import csv
-from semantic import SemanticAnalyzer
+import json
+import sys
 
-# 定义 Token 类型
-class Token:
-    def __init__(self, token, lexeme=None):
-        self.token = token
-        self.lexeme = lexeme
-
-    def __repr__(self):
-        return f"Token({self.token}, {self.lexeme})"
-
-
-# 语法树节点类
-class TreeNode:
-    def __init__(self, node_type, value=None, children=None):
-        self.node_type = node_type
-        self.value = value
-        self.children = children if children else []
-
-    def add_child(self, child):
-        self.children.append(child)
-
-    def __repr__(self):
-        return f"TreeNode({self.node_type}, {self.value}, {self.children})"
+# Grammar rules are defined here in parser.py
+# 更新后的语法规则
+GRAMMAR = {
+    "S'": [['S']],
+    'S': [["D'", 'C', '.'], ['C', '.']],
+    "D'": [['D', "D'"], ['D']],
+    'D': [['let', 'T', 'id', 'be', 'E', '.']],
+    'T': [['int'], ['set']],
+    'C': [['show', 'A']],
+    'A': [['E'], ['P']],
+    'E': [["E'"], ['E', 'U', "E'"], ['E', '+', "E'"], ['E', '-', "E'"]],
+    "E'": [["E''"], ["E'", 'I', "E''"], ["E'", '*', "E''"]],
+    "E''": [['num'], ['id'], ['(', 'E', ')'], ['{', 'Z', 'P', '}']],
+    'Z': [['id', ':']],
+    'P': [['P', '|', "P'"], ["P'"]],
+    "P'": [["P'", '&', "P''"], ["P''"]],
+    "P''": [['R'], ['(', 'P', ')'], ['!', 'R']],
+    'R': [['E', '<', 'E'], ['E', '>', 'E'], ['E', '=', 'E'], ['E', '@', 'E']],
+}
 
 
-# 解析器类
+def load_parsing_table(parsing_table_file):
+    action_table = {}
+    goto_table = {}
+    
+    with open(parsing_table_file, 'r') as f:
+        lines = f.readlines()
+        # 获取第一行，确定 'action' 和 'goto' 的列范围
+        header_line = lines[0]
+        header_fields = [name.strip() for name in header_line.strip().split(',')]
+        
+        # 找到 'action' 和 'goto' 的列索引
+        try:
+            action_index = header_fields.index('action')
+            goto_index = header_fields.index('goto')
+        except ValueError:
+            raise ValueError("CSV 文件缺少 'action' 或 'goto' 列标题。")
+        
+        # 获取第二行，包含终结符和非终结符
+        symbol_line = lines[1]
+        symbols = [name.strip() for name in symbol_line.strip().split(',')]
+        
+        # 将第一列设置为 'state'，如果为空的话
+        if symbols[0] == '':
+            symbols[0] = 'state'
+        
+        # 确定终结符和非终结符列表
+        action_symbols = symbols[action_index : goto_index]
+        goto_symbols = symbols[goto_index +1 : ]
+        
+        # 构建完整的字段名列表
+        fieldnames = symbols
+        
+        # 打印字段名用于调试
+        # print("Field names:", fieldnames)
+        # print("Action symbols:", action_symbols)
+        # print("Goto symbols:", goto_symbols)
+        
+        # 读取剩余的行作为数据
+        data_lines = lines[2:]
+        
+        # 创建 CSV DictReader
+        reader = csv.DictReader(data_lines, fieldnames=fieldnames)
+        
+        for row in reader:
+            # 跳过空行
+            state_value = row['state'].strip()
+            if not state_value:
+                continue
+            
+            try:
+                state = int(state_value)
+            except ValueError:
+                # print(f"Skipping invalid row with state value: {state_value}")
+                continue
+            
+            # 初始化状态的 ACTION 和 GOTO 表项
+            if state not in action_table:
+                action_table[state] = {}
+            if state not in goto_table:
+                goto_table[state] = {}
+            
+            for key, value in row.items():
+                key = key.strip()
+                value = value.strip()
+                
+                if key and value and key != 'state':
+                    if key in action_symbols:
+                        # ACTION 表条目
+                        action_table[state][key] = value
+                    elif key in goto_symbols:
+                        # GOTO 表条目
+                        if value.isdigit():
+                            goto_table[state][key] = int(value)
+                        else:
+                            print("Syntax Error!")
+                            with open("syntax_out.json", "w") as json_file:
+                                json.dump({}, json_file)
+                            sys.exit(0)  # Exit with code 0
+        
+        # 打印构建的 ACTION 和 GOTO 表用于调试
+        # print("Action Table:", action_table)
+        # print("Goto Table:", goto_table)
+        return action_table, goto_table
+
 class SLRParser:
-    def __init__(self, slr_table_file):
-        self.slr_table = self.load_slr_table(slr_table_file)
-        self.stack = [0]  # 初始栈，包含起始状态
-        self.input_tokens = []  # 记录输入的 token
-        self.syntax_tree = TreeNode("root")  # 创建语法树的根节点
-        self.current_token_index = 0  # 当前输入 token 的索引
-        self.semantic_analyzer = SemanticAnalyzer()  # 语义分析器
+    def __init__(self, tokens, action_table, goto_table):
+        self.tokens = tokens
+        self.stack = [0]  # 起始状态
+        self.cursor = 0
+        self.syntax_tree = []
+        self.action_table = action_table
+        self.goto_table = goto_table
+        self.input = tokens + [{'token': '$', 'lexeme': '$'}]  # 结束标记
 
-    # 读取 SLR 解析表
-    def load_slr_table(self, file_path):
-        slr_table = {}
-        slr_symbols = ['.', 'let', 'id', 'be', 'int', 'set', 'U', '+', '-', 'I', '*', 'num', '(', ')', '{', '}', ':',
-                       '|', '&', '!', '<', '>', '=', '@', 'show', '$', 'S\'', 'S', 'D\'', 'D', 'T', 'E', 'E\'', 'E\'\'',
-                       'Z', 'P', 'P\'', 'P\'\'', 'R', 'C', 'A']  # 确保符号列表的顺序和数量
-        with open(file_path, 'r') as f:
-            reader = csv.reader(f)
-            header = next(reader)  # Skip header
-            for row in reader:
-                state = row[0].strip()  # First column is state
-                if state:  # Only process rows that have a state
-                    state = int(state)  # Convert to int
-                    if state not in slr_table:  # Initialize the state dictionary if needed
-                        slr_table[state] = {}
-                    # Check the length of the row against slr_symbols
-                    for i, symbol in enumerate(row[1:]):
-                        if i >= len(slr_symbols):  # Check if i exceeds the length of slr_symbols
-                            break  # Skip processing if there are too many columns
-                        symbol = symbol.strip()
-                        if symbol:  # Only process non-empty symbols
-                            slr_table[state][slr_symbols[i]] = symbol
-        return slr_table
-
-    # 根据输入 token 进行解析
-    def parse(self, tokens):
-        self.input_tokens = tokens
-        lookahead_token = '$'  # 用 '$' 表示输入结束
-        while True:
-            # 获取栈顶状态
-            top_state = self.stack[-1]
-            current_token = self.input_tokens[self.current_token_index].token if self.current_token_index < len(
-                self.input_tokens) else lookahead_token
-
-            # 查找解析表，获取当前操作
-            action = self.slr_table.get(int(top_state), {}).get(current_token, None)
-            if action is None:
-                raise ValueError(f"Parsing error at state {top_state}, symbol {current_token}")
-
-            if action.startswith('s'):  # 移进操作
-                next_state = int(action[1:])  # 获取移进后的状态
-                self.stack.append(next_state)  # 推入新的状态
-                self.syntax_tree.add_child(
-                    TreeNode('terminal', self.input_tokens[self.current_token_index].lexeme))  # 添加语法树的叶子节点
-                self.current_token_index += 1  # 移动到下一个 token
-
-            elif action.startswith('r'):  # 规约操作
-                production_index = int(action[1:])  # 获取规约产生式索引
-                self.reduce(production_index)
-
-            elif action == 'acc':  # 接受操作
-                print("Parsing complete!")
-                break
-
-            else:
-                raise ValueError(f"Parsing error at state {top_state}, symbol {current_token}")
-
-    def get_production(self,production_index):
-        return {
-            0: {'left': "S'", 'right': ['S']},
-            1: {'left': 'S', 'right': ['D\'', 'C']},
-            2: {'left': 'S', 'right': ['C']},
-            3: {'left': 'D\'', 'right': ['D', 'D\'']},
-            4: {'left': 'D\'', 'right': ['D']},
-            5: {'left': 'D', 'right': ['let', 'T', 'id', 'be', 'E']},
-            6: {'left': 'T', 'right': ['int']},
-            7: {'left': 'T', 'right': ['set']},
-            8: {'left': 'E', 'right': ['E\'']},
-            9: {'left': 'E', 'right': ['E', 'U', 'E\'']},
-            10: {'left': 'E', 'right': ['E', '+', 'E\'']},
-            11: {'left': 'E', 'right': ['E', '-', 'E\'']},
-            12: {'left': 'E\'', 'right': ['E\'\'']},
-            13: {'left': 'E\'', 'right': ['E\'', 'I', 'E\'\'']},
-            14: {'left': 'E\'', 'right': ['E\'', '*', 'E\'\'']},
-            15: {'left': 'E\'\'', 'right': ['num']},
-            16: {'left': 'E\'\'', 'right': ['id']},
-            17: {'left': 'E\'\'', 'right': ['(', 'E', ')']},
-            18: {'left': 'E\'\'', 'right': ['{', 'Z', 'P', '}']},
-            19: {'left': 'Z', 'right': ['id', ':']},
-            20: {'left': 'P', 'right': ['P', '|', 'P\'']},
-            21: {'left': 'P', 'right': ['P\'']},
-            22: {'left': 'P\'', 'right': ['P\'', '&', 'P\'\'']},
-            23: {'left': 'P\'', 'right': ['P\'\'']},
-            24: {'left': 'P\'\'', 'right': ['R']},
-            25: {'left': 'P\'\'', 'right': ['(', 'P', ')']},
-            26: {'left': 'P\'\'', 'right': ['!', 'R']},
-            27: {'left': 'R', 'right': ['E', '<', 'E']},
-            28: {'left': 'R', 'right': ['E', '>', 'E']},
-            29: {'left': 'R', 'right': ['E', '=', 'E']},
-            30: {'left': 'R', 'right': ['E', '@', 'E']},
-            31: {'left': 'C', 'right': ['show', 'A']},
-            32: {'left': 'A', 'right': ['E']},
-            33: {'left': 'A', 'right': ['P']},
+        # 使用提供的规则编号和产生式，构建产生式字典
+        self.productions = {
+            0: ("S'", ['S']),
+            1: ('S', ["D'", 'C', '.']),
+            2: ('S', ['C', '.']),
+            3: ("D'", ['D', "D'"]),
+            4: ("D'", ['D']),
+            5: ('D', ['let', 'T', 'id', 'be', 'E', '.']),
+            6: ('T', ['int']),
+            7: ('T', ['set']),
+            8: ('E', ["E'"]),
+            9: ('E', ['E', 'U', "E'"]),
+            10: ('E', ['E', '+', "E'"]),
+            11: ('E', ['E', '-', "E'"]),
+            12: ("E'", ["E''"]),
+            13: ("E'", ["E'", 'I', "E''"]),
+            14: ("E'", ["E'", '*', "E''"]),
+            15: ("E''", ['num']),
+            16: ("E''", ['id']),
+            17: ("E''", ['(', 'E', ')']),
+            18: ("E''", ['{', 'Z', 'P', '}']),
+            19: ('Z', ['id', ':']),
+            20: ('P', ['P', '|', "P'"]),
+            21: ('P', ["P'"]),
+            22: ("P'", ["P'", '&', "P''"]),
+            23: ("P'", ["P''"]),
+            24: ("P''", ['R']),
+            25: ("P''", ['(', 'P', ')']),
+            26: ("P''", ['!', 'R']),
+            27: ('R', ['E', '<', 'E']),
+            28: ('R', ['E', '>', 'E']),
+            29: ('R', ['E', '=', 'E']),
+            30: ('R', ['E', '@', 'E']),
+            31: ('C', ['show', 'A']),
+            32: ('A', ['E']),
+            33: ('A', ['P']),
         }
 
-    def reduce(self, production_index):
-        # 获取产生式
-        production = self.get_production(production_index)
+    def parse(self):
+        syntax_stack = []
+        while True:
+            state = self.stack[-1]
+            current_token = self.input[self.cursor]['token']
+            # print(f"Current stack: {self.stack}, current token: {current_token}")
 
-        # 确保 production 中有 'left' 和 'right' 键
-        if 'left' not in production or 'right' not in production:
-            return
+            # 查找当前状态和符号的动作
+            action = self.action_table.get(state, {}).get(current_token)
 
-        # 执行规约操作：根据生产式更新栈
-        production_length = len(production['right'])
-        for _ in range(production_length):
-            self.stack.pop()
+            # 打印动作用于调试
+            # print(f"Action lookup for state {state} and token '{current_token}': {action}")
 
-        left_symbol = production['left']
-        goto_state = self.slr_table.get(int(self.stack[-1]), {}).get('goto', {}).get(left_symbol, 0)
-        self.stack.append(goto_state)
+            if action == 'accept' or action == 'acc':
+                # print("Accepted!") #调试信息
+                break
 
-        # 创建新的语法树节点，非终结符
-        new_node = TreeNode('non-terminal', f"{production['left']} -> {' '.join(production['right'])}")
-        self.syntax_tree.add_child(new_node)
-
-        # 调用语义分析器处理当前规约
-        self.semantic_analyzer.analyze_semantics(new_node)
-
-    def save_syntax_tree(self, file_path):
-        import json
-        tree = self.syntax_tree
-        stack = [(tree, [])]
-        syntax_tree_json = []
-        while stack:
-            node, path = stack.pop()
-            node_dict = {
-                'node_type': node.node_type,
-                'value': node.value,
-                'children': []
-            }
-            path.append(node_dict)
-            if node.children:
-                for child in node.children:
-                    stack.append((child, [node_dict]))
+            if action and action.startswith('s'):
+                # 移入操作
+                next_state = int(action[1:])
+                self.stack.append(next_state)
+                self.cursor += 1
+                # 将终结符作为叶子节点推入语法树栈
+                syntax_stack.append({'token': current_token, 'lexeme': self.input[self.cursor - 1]['lexeme']})
+                # print(f"Shift: Move to state {next_state}, stack now: {self.stack}")
+            elif action and action.startswith('r'):
+                # 归约操作
+                rule_number = int(action[1:])
+                if rule_number not in self.productions:
+                    raise ValueError(f"Invalid rule number: {rule_number}")
+                lhs, rhs = self.productions[rule_number]
+                # print(f"Reduce: Applying rule {rule_number} ({lhs} -> {' '.join(rhs)})")
+                if len(rhs) > 0:
+                    self.stack = self.stack[:-len(rhs)]  # 弹出与产生式右部长度相同的状态
+                    # 从语法树栈中弹出相应数量的节点
+                    children = syntax_stack[-len(rhs):]
+                    syntax_stack = syntax_stack[:-len(rhs)]
+                else:
+                    children = []
+                current_state = self.stack[-1]
+                next_state = self.goto_table.get(current_state, {}).get(lhs)
+                if next_state is None:
+                    raise SyntaxError(f"No goto state for {lhs} after reduction from state {current_state}")
+                self.stack.append(next_state)
+                # 创建新的父节点并推入语法树栈
+                syntax_stack.append({'name': lhs, 'children': children})
+                # print(f"Reduced: New stack: {self.stack}")
             else:
-                syntax_tree_json.append(node_dict)
-        with open(file_path, 'w') as f:
-            json.dump(syntax_tree_json, f, indent=4)
+                #处理错误
+                print("Syntax Error!")
+                with open("syntax_out.json", "w") as json_file:
+                    json.dump({}, json_file)
+                sys.exit(0)  # Exit with code 0
+
+        # 输出语法树到 JSON 文件
+        if syntax_stack:
+            self.syntax_tree = syntax_stack[0]  # 语法树栈的顶部即为完整的语法树
+        else:
+            self.syntax_tree = {}
+        self.output_json()
+
+    
+    def output_json(self):
+        with open('syntax_out.json', 'w') as f:
+            json.dump(self.syntax_tree, f, indent=2)
+            print("Syntactic Analysis Complete!")

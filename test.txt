@@ -1,0 +1,4 @@
+let set x be { a : a > 3 } .
+let set y be { a : a < 5 & a @ x } .
+let set z be { a : a > 0 } .
+show z I y .
