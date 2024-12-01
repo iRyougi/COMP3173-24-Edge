@@ -1,7 +1,7 @@
 import argparse
 import json
 from lexer import Lexer
-from parser import SLRParser, load_parsing_table  # Assuming parser.py and this file are in the same directory
+# from parser import SLRParser, load_parsing_table  # Assuming parser.py and this file are in the same directory
 
 def main():
     # 设置命令行参数解析器
@@ -29,11 +29,11 @@ def main():
 
     # Step 2: 语法分析
     # 读取解析表 (固定路径为 'SLR Parsing Table.csv')
-    action_table, goto_table = load_parsing_table("SLR Parsing Table.csv")
+    # action_table, goto_table = load_parsing_table("SLR Parsing Table.csv")
 
     # 创建 SLRParser 实例并进行语法分析
-    parser = SLRParser(tokens, action_table, goto_table)
-    parser.parse()
+    # parser = SLRParser(tokens, action_table, goto_table)
+    # parser.parse()
 
     # Step 3: Working
 

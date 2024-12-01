@@ -160,16 +160,16 @@ class SLRParser:
         while True:
             state = self.stack[-1]
             current_token = self.input[self.cursor]['token']
-            # print(f"Current stack: {self.stack}, current token: {current_token}")
+            print(f"Current stack: {self.stack}, current token: {current_token}")
 
             # 查找当前状态和符号的动作
             action = self.action_table.get(state, {}).get(current_token)
 
             # 打印动作用于调试
-            # print(f"Action lookup for state {state} and token '{current_token}': {action}")
+            print(f"Action lookup for state {state} and token '{current_token}': {action}")
 
             if action == 'accept' or action == 'acc':
-                # print("Accepted!") #调试信息
+                print("Accepted!")  # 调试信息
                 break
 
             if action and action.startswith('s'):
@@ -179,21 +179,23 @@ class SLRParser:
                 self.cursor += 1
                 # 将终结符作为叶子节点推入语法树栈
                 syntax_stack.append({'token': current_token, 'lexeme': self.input[self.cursor - 1]['lexeme']})
-                # print(f"Shift: Move to state {next_state}, stack now: {self.stack}")
+                print(f"Shift: Move to state {next_state}, stack now: {self.stack}")
             elif action and action.startswith('r'):
                 # 归约操作
                 rule_number = int(action[1:])
                 if rule_number not in self.productions:
                     raise ValueError(f"Invalid rule number: {rule_number}")
                 lhs, rhs = self.productions[rule_number]
-                # print(f"Reduce: Applying rule {rule_number} ({lhs} -> {' '.join(rhs)})")
-                if len(rhs) > 0:
-                    self.stack = self.stack[:-len(rhs)]  # 弹出与产生式右部长度相同的状态
-                    # 从语法树栈中弹出相应数量的节点
-                    children = syntax_stack[-len(rhs):]
-                    syntax_stack = syntax_stack[:-len(rhs)]
-                else:
-                    children = []
+                print(f"Reduce: Applying rule {rule_number} ({lhs} -> {' '.join(rhs)})")
+                num_to_pop = len(rhs)
+                if rhs == ['']:
+                    num_to_pop = 0  # 对于空产生式，不弹出栈
+                # 从栈中弹出与产生式右部长度相同的状态
+                self.stack = self.stack[:-num_to_pop]
+                # 从语法树栈中弹出相应数量的节点
+                children = syntax_stack[-num_to_pop:] if num_to_pop > 0 else []
+                syntax_stack = syntax_stack[:-num_to_pop] if num_to_pop > 0 else syntax_stack
+                # children.reverse()
                 current_state = self.stack[-1]
                 next_state = self.goto_table.get(current_state, {}).get(lhs)
                 if next_state is None:
@@ -201,20 +203,23 @@ class SLRParser:
                 self.stack.append(next_state)
                 # 创建新的父节点并推入语法树栈
                 syntax_stack.append({'name': lhs, 'children': children})
-                # print(f"Reduced: New stack: {self.stack}")
+                print(f"Reduced: New stack: {self.stack}")
             else:
-                #处理错误
+                # 处理错误
                 print("Syntax Error!")
                 with open("syntax_out.json", "w") as json_file:
                     json.dump({}, json_file)
-                sys.exit(0)  # Exit with code 0
+                sys.exit(0)  # 退出程序
 
         # 输出语法树到 JSON 文件
         if syntax_stack:
-            self.syntax_tree = syntax_stack[0]  # 语法树栈的顶部即为完整的语法树
+            self.syntax_tree = syntax_stack[-1]  # 使用栈的最后一个元素作为语法树根节点
         else:
             self.syntax_tree = {}
         self.output_json()
+
+
+
 
     
     def output_json(self):

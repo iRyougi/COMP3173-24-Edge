@@ -1,182 +1,18 @@
 [
   {
-    "token": "let",
-    "lexeme": "let"
-  },
-  {
-    "token": "set",
-    "lexeme": "set"
-  },
-  {
-    "token": "id",
-    "lexeme": "x"
-  },
-  {
-    "token": "be",
-    "lexeme": "be"
-  },
-  {
-    "token": "{",
-    "lexeme": "{"
-  },
-  {
-    "token": "id",
-    "lexeme": "a"
-  },
-  {
-    "token": ":",
-    "lexeme": ":"
-  },
-  {
-    "token": "id",
-    "lexeme": "a"
-  },
-  {
-    "token": ">",
-    "lexeme": ">"
+    "token": "int",
+    "lexeme": "int"
   },
   {
     "token": "num",
-    "lexeme": 3
-  },
-  {
-    "token": "}",
-    "lexeme": "}"
+    "lexeme": "1"
   },
   {
     "token": ".",
     "lexeme": "."
-  },
-  {
-    "token": "let",
-    "lexeme": "let"
-  },
-  {
-    "token": "set",
-    "lexeme": "set"
-  },
-  {
-    "token": "id",
-    "lexeme": "y"
-  },
-  {
-    "token": "be",
-    "lexeme": "be"
-  },
-  {
-    "token": "{",
-    "lexeme": "{"
-  },
-  {
-    "token": "id",
-    "lexeme": "a"
-  },
-  {
-    "token": ":",
-    "lexeme": ":"
-  },
-  {
-    "token": "id",
-    "lexeme": "a"
-  },
-  {
-    "token": "<",
-    "lexeme": "<"
   },
   {
     "token": "num",
-    "lexeme": 5
-  },
-  {
-    "token": "&",
-    "lexeme": "&"
-  },
-  {
-    "token": "id",
-    "lexeme": "a"
-  },
-  {
-    "token": "@",
-    "lexeme": "@"
-  },
-  {
-    "token": "id",
-    "lexeme": "x"
-  },
-  {
-    "token": "}",
-    "lexeme": "}"
-  },
-  {
-    "token": ".",
-    "lexeme": "."
-  },
-  {
-    "token": "let",
-    "lexeme": "let"
-  },
-  {
-    "token": "set",
-    "lexeme": "set"
-  },
-  {
-    "token": "id",
-    "lexeme": "z"
-  },
-  {
-    "token": "be",
-    "lexeme": "be"
-  },
-  {
-    "token": "{",
-    "lexeme": "{"
-  },
-  {
-    "token": "id",
-    "lexeme": "a"
-  },
-  {
-    "token": ":",
-    "lexeme": ":"
-  },
-  {
-    "token": "id",
-    "lexeme": "a"
-  },
-  {
-    "token": ">",
-    "lexeme": ">"
-  },
-  {
-    "token": "num",
-    "lexeme": 0
-  },
-  {
-    "token": "}",
-    "lexeme": "}"
-  },
-  {
-    "token": ".",
-    "lexeme": "."
-  },
-  {
-    "token": "show",
-    "lexeme": "show"
-  },
-  {
-    "token": "id",
-    "lexeme": "z"
-  },
-  {
-    "token": "I",
-    "lexeme": "I"
-  },
-  {
-    "token": "id",
-    "lexeme": "y"
-  },
-  {
-    "token": ".",
-    "lexeme": "."
+    "lexeme": "23"
   }
 ]
