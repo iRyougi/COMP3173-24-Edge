@@ -17,7 +17,7 @@ class Lexer:
             ("ID", r'[a-z_][a-z_]*'),  # Identifiers with lowercase letters only
             ("PUNCTUATION", r'[{}().,:]'),
             ("ARITH_OP", r'[+\-*]'),
-            ("REL_OP", r'[<>@]'),
+            ("REL_OP", r'[<>@=]'),
             ("LOGIC_OP", r'[&|!]'),
             ("SET_OP", r'[UI]'),  # Assuming 'U' and 'I' are valid set operators
             ("SKIP", r'[ \t\n]+'),  # Skip spaces, tabs, and newlines
