@@ -1,0 +1,14 @@
+[
+  {
+    "token": "num",
+    "lexeme": "0"
+  },
+  {
+    "token": "num",
+    "lexeme": "0"
+  },
+  {
+    "token": "num",
+    "lexeme": "12300123"
+  }
+]

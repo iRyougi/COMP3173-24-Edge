@@ -1,58 +1,77 @@
+import re
 import json
+import sys
 
 class Lexer:
     def __init__(self, source_code):
         self.source_code = source_code
         self.tokens = []
-        self.symbol_table = {}  # 添加符号表
         self.current_position = 0
+        self.symbol_table = {}
 
     def tokenize(self):
-        keywords = {"show"}
-        operators = {"+", "-", "*", "@", "<", ">", "&", "|", "!"}
-        special_symbols = {".", "(", ")", "{", "}", ":"}
-        whitespace = {" ", "\n", "\t"}
+        token_specification = [
+            # Keywords, matched only if not followed by a lowercase letter, digit, or underscore
+            ("KEYWORD", r'\b(let|be|show|int|set)(?![a-z_0-9])'),  
+            ("NUMBER", r'0|[1-9]\d*'),  # Numbers: zero or non-zero followed by digits
+            ("ID", r'[a-z_][a-z_]*'),  # Identifiers with lowercase letters only
+            ("PUNCTUATION", r'[{}().,:]'),
+            ("ARITH_OP", r'[+\-*]'),
+            ("REL_OP", r'[<>@=]'),
+            ("LOGIC_OP", r'[&|!]'),
+            ("SET_OP", r'[UI]'),  # Assuming 'U' and 'I' are valid set operators
+            ("SKIP", r'[ \t\n]+'),  # Skip spaces, tabs, and newlines
+            ("MISMATCH", r'.'),  # Catch-all for any other character
+        ]
+        token_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
+        get_token = re.compile(token_regex).match
+        line = self.source_code
 
-        while self.current_position < len(self.source_code):
-            char = self.source_code[self.current_position]
+        mo = get_token(line)
+        while mo is not None:
+            kind = mo.lastgroup
+            value = mo.group()
 
-            if char in whitespace:
-                self.current_position += 1
-                continue
-
-            if char.isalpha():
-                start_pos = self.current_position
-                while self.current_position < len(self.source_code) and self.source_code[self.current_position].isalnum():
-                    self.current_position += 1
-                lexeme = self.source_code[start_pos:self.current_position]
-                if lexeme in keywords:
-                    self.tokens.append({"token": lexeme, "lexeme": lexeme})
-                else:
-                    raise ValueError(f"Unexpected identifier '{lexeme}'")
-
-            elif char.isdigit():
-                start_pos = self.current_position
-                while self.current_position < len(self.source_code) and self.source_code[self.current_position].isdigit():
-                    self.current_position += 1
-                lexeme = self.source_code[start_pos:self.current_position]
-                self.tokens.append({"token": "num", "lexeme": lexeme})
-                self.symbol_table[lexeme] = "num"
-
-            elif char in operators:
-                self.tokens.append({"token": char, "lexeme": char})
-                self.current_position += 1
-
-            elif char in special_symbols:
-                self.tokens.append({"token": char, "lexeme": char})
-                self.current_position += 1
-
+            if kind == "SKIP":
+                pass  # Ignore whitespace
+            elif kind == "MISMATCH":
+                # Handle the lexical error
+                print("Lexical Error!")
+                with open("lexer_out.json", "w") as json_file:
+                    json.dump([], json_file)
+                sys.exit(0)
             else:
-                raise ValueError(f"Lexical Error: Unexpected character '{char}' at position {self.current_position}")
+                if kind == "NUMBER":
+                    if len(value) > 10:
+                        # Output Lexical Error and exit
+                        print("Lexical Error!")
+                        with open("lexer_out.json", "w") as json_file:
+                            json.dump([], json_file)
+                        sys.exit(0)
+                    self.tokens.append({"token": "num", "lexeme": value})
+                elif kind == "ID":
+                    if value not in self.symbol_table:
+                        self.symbol_table[value] = {"type": None, "value": None}
+                    self.tokens.append({"token": "id", "lexeme": value})
+                elif kind == "KEYWORD":
+                    self.tokens.append({"token": value, "lexeme": value})
+                else:
+                    self.tokens.append({"token": value, "lexeme": value})
 
-    def save_tokens(self, output_file):
-        with open(output_file, "w") as f:
-            json.dump(self.tokens, f, indent=2)
+            mo = get_token(line, mo.end())
 
-    def save_symbol_table(self, output_file):
-        with open(output_file, "w") as f:
-            json.dump(self.symbol_table, f, indent=2)
+        return self.tokens
+
+
+
+    def next_token(self):
+        if self.current_position < len(self.tokens):
+            token = self.tokens[self.current_position]
+            self.current_position += 1
+            return token
+        return None
+
+    def get_symbol_table(self):
+        # Debug output to verify symbol table content
+        # print("Symbol table:", self.symbol_table)
+        return self.symbol_table
