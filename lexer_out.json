@@ -1,18 +1,14 @@
 [
   {
-    "token": "int",
-    "lexeme": "int"
+    "token": "num",
+    "lexeme": "0"
   },
   {
     "token": "num",
-    "lexeme": "1"
-  },
-  {
-    "token": ".",
-    "lexeme": "."
+    "lexeme": "0"
   },
   {
     "token": "num",
-    "lexeme": "23"
+    "lexeme": "12300123"
   }
 ]

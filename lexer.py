@@ -13,7 +13,7 @@ class Lexer:
         token_specification = [
             # Keywords, matched only if not followed by a lowercase letter, digit, or underscore
             ("KEYWORD", r'\b(let|be|show|int|set)(?![a-z_0-9])'),  
-            ("NUMBER", r'\d+'),  # Numbers
+            ("NUMBER", r'0|[1-9]\d*'),  # Numbers: zero or non-zero followed by digits
             ("ID", r'[a-z_][a-z_]*'),  # Identifiers with lowercase letters only
             ("PUNCTUATION", r'[{}().,:]'),
             ("ARITH_OP", r'[+\-*]'),
@@ -26,9 +26,6 @@ class Lexer:
         token_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
         get_token = re.compile(token_regex).match
         line = self.source_code
-
-        # 调试用输入信息
-        # print(f"Source code for tokenization:\n{line}\n")
 
         mo = get_token(line)
         while mo is not None:
@@ -45,7 +42,12 @@ class Lexer:
                 sys.exit(0)
             else:
                 if kind == "NUMBER":
-                    # value = int(value) #保持字符串格式
+                    if len(value) > 10:
+                        # Output Lexical Error and exit
+                        print("Lexical Error!")
+                        with open("lexer_out.json", "w") as json_file:
+                            json.dump([], json_file)
+                        sys.exit(0)
                     self.tokens.append({"token": "num", "lexeme": value})
                 elif kind == "ID":
                     if value not in self.symbol_table:
@@ -58,9 +60,8 @@ class Lexer:
 
             mo = get_token(line, mo.end())
 
-        # Debug output to verify tokenization 调试使用
-        # print("Tokens found:", self.tokens)
         return self.tokens
+
 
 
     def next_token(self):
