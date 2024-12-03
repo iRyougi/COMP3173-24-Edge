@@ -10,12 +10,19 @@ class Lexer:
         self.symbol_table = {}
 
     def tokenize(self):
+        if not self.source_code.strip():
+            # Input is empty
+            print("Lexical Error!")
+            with open("lexer_out.json", "w") as json_file:
+                json.dump([], json_file)
+            sys.exit(0)
+
         token_specification = [
             # Keywords, matched only if not followed by a lowercase letter, digit, or underscore
-            ("KEYWORD", r'\b(let|be|show|int|set)(?![a-z_0-9])'),  
+            ("KEYWORD", r'\b(let|be|show|int|set|simplify)(?![a-z])'),  
             ("NUMBER", r'0|[1-9]\d*'),  # Numbers: zero or non-zero followed by digits
-            ("ID", r'[a-z_][a-z_]*'),  # Identifiers with lowercase letters only
-            ("PUNCTUATION", r'[{}().,:]'),
+            ("ID", r'[a-z][a-z]*'),  # Identifiers with lowercase letters only
+            ("PUNCTUATION", r'[{}().:]'),
             ("ARITH_OP", r'[+\-*]'),
             ("REL_OP", r'[<>@=]'),
             ("LOGIC_OP", r'[&|!]'),
@@ -42,12 +49,12 @@ class Lexer:
                 sys.exit(0)
             else:
                 if kind == "NUMBER":
-                    if len(value) > 10:
+                    # if len(value) > 10:
                         # Output Lexical Error and exit
-                        print("Lexical Error!")
-                        with open("lexer_out.json", "w") as json_file:
-                            json.dump([], json_file)
-                        sys.exit(0)
+                        # print("Lexical Error!")
+                        # with open("lexer_out.json", "w") as json_file:
+                            # json.dump([], json_file)
+                        # sys.exit(0)
                     self.tokens.append({"token": "num", "lexeme": value})
                 elif kind == "ID":
                     if value not in self.symbol_table:
@@ -61,8 +68,6 @@ class Lexer:
             mo = get_token(line, mo.end())
 
         return self.tokens
-
-
 
     def next_token(self):
         if self.current_position < len(self.tokens):
