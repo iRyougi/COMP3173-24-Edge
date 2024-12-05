@@ -1,14 +1,1 @@
-[
-  {
-    "token": "id",
-    "lexeme": "letbe"
-  },
-  {
-    "token": "id",
-    "lexeme": "setint"
-  },
-  {
-    "token": "id",
-    "lexeme": "sim"
-  }
-]
+[]
