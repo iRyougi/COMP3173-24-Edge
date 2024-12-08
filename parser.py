@@ -207,7 +207,7 @@ class SLRParser:
             else:
                 # 处理错误
                 print("Syntax Error!")
-                with open("syntax_out.json", "w") as json_file:
+                with open("parser_out.json", "w") as json_file:
                     json.dump({}, json_file)
                 sys.exit(0)  # 退出程序
 
@@ -223,6 +223,6 @@ class SLRParser:
 
     
     def output_json(self):
-        with open('syntax_out.json', 'w') as f:
+        with open('parser_out.json', 'w') as f:
             json.dump(self.syntax_tree, f, indent=2)
             print("Syntactic Analysis Complete!")

@@ -1,14 +1,42 @@
 [
   {
-    "token": "num",
-    "lexeme": "0"
+    "token": "show",
+    "lexeme": "show"
   },
   {
     "token": "num",
-    "lexeme": "0"
+    "lexeme": "4"
   },
   {
-    "token": "num",
-    "lexeme": "12300123"
+    "token": "=",
+    "lexeme": "="
+  },
+  {
+    "token": "!",
+    "lexeme": "!"
+  },
+  {
+    "token": "(",
+    "lexeme": "("
+  },
+  {
+    "token": "id",
+    "lexeme": "s"
+  },
+  {
+    "token": "U",
+    "lexeme": "U"
+  },
+  {
+    "token": "id",
+    "lexeme": "t"
+  },
+  {
+    "token": ")",
+    "lexeme": ")"
+  },
+  {
+    "token": ".",
+    "lexeme": "."
   }
 ]
