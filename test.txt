@@ -1,1 +1,5 @@
-show 4 = !(s U t ).
+let int num be 3 .
+let int numn be 4 .
+let int numm be 5 .
+let set s be { x : x = num | x = numn | x = numm } .
+show s .
