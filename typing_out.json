@@ -1,0 +1,51 @@
+{
+    "name": "S",
+    "type": "calculation",
+    "children": [
+        {
+            "name": "C",
+            "type": "calculation",
+            "children": [
+                {
+                    "token": "show",
+                    "lexeme": "show",
+                    "type": "void"
+                },
+                {
+                    "name": "A",
+                    "type": "calculation",
+                    "children": [
+                        {
+                            "name": "E",
+                            "type": "integer",
+                            "children": [
+                                {
+                                    "name": "E'",
+                                    "type": "integer",
+                                    "children": [
+                                        {
+                                            "name": "E''",
+                                            "type": "integer",
+                                            "children": [
+                                                {
+                                                    "token": "num",
+                                                    "lexeme": "3",
+                                                    "type": "integer"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "token": ".",
+            "lexeme": ".",
+            "type": "void"
+        }
+    ]
+}

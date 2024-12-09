@@ -1,1 +1,42 @@
-{}
+{
+  "name": "S",
+  "children": [
+    {
+      "name": "C",
+      "children": [
+        {
+          "token": "show",
+          "lexeme": "show"
+        },
+        {
+          "name": "A",
+          "children": [
+            {
+              "name": "E",
+              "children": [
+                {
+                  "name": "E'",
+                  "children": [
+                    {
+                      "name": "E''",
+                      "children": [
+                        {
+                          "token": "num",
+                          "lexeme": "3"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "token": ".",
+      "lexeme": "."
+    }
+  ]
+}
