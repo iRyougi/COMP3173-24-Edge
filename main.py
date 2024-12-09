@@ -69,12 +69,12 @@ def main():
         pass
 
     # 读取并打印 typing_out.json 内容
-    try:
-        with open("typing_out.json", "r") as f:
-            typing_out = json.load(f)
-            print(json.dumps(typing_out, indent=4))
-    except Exception as e:
-        print(f"Error reading typing_out.json: {e}")
+    # try:
+    #     with open("typing_out.json", "r") as f:
+    #         typing_out = json.load(f)
+    #         print(json.dumps(typing_out, indent=4))
+    # except Exception as e:
+    #     print(f"Error reading typing_out.json: {e}")
 
 
 if __name__ == "__main__":

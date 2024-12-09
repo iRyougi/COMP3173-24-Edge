@@ -22,7 +22,7 @@
          },
          {
           "token": "id",
-          "lexeme": "num"
+          "lexeme": "x"
          },
          {
           "token": "be",
@@ -39,7 +39,7 @@
               "children": [
                {
                 "token": "num",
-                "lexeme": "3"
+                "lexeme": "1"
                }
               ]
              }
@@ -67,14 +67,14 @@
             "name": "T",
             "children": [
              {
-              "token": "int",
-              "lexeme": "int"
+              "token": "set",
+              "lexeme": "set"
              }
             ]
            },
            {
             "token": "id",
-            "lexeme": "numn"
+            "lexeme": "y"
            },
            {
             "token": "be",
@@ -90,8 +90,87 @@
                 "name": "E''",
                 "children": [
                  {
-                  "token": "num",
-                  "lexeme": "4"
+                  "token": "{",
+                  "lexeme": "{"
+                 },
+                 {
+                  "name": "Z",
+                  "children": [
+                   {
+                    "token": "id",
+                    "lexeme": "a"
+                   },
+                   {
+                    "token": ":",
+                    "lexeme": ":"
+                   }
+                  ]
+                 },
+                 {
+                  "name": "P",
+                  "children": [
+                   {
+                    "name": "P'",
+                    "children": [
+                     {
+                      "name": "P''",
+                      "children": [
+                       {
+                        "name": "R",
+                        "children": [
+                         {
+                          "name": "E",
+                          "children": [
+                           {
+                            "name": "E'",
+                            "children": [
+                             {
+                              "name": "E''",
+                              "children": [
+                               {
+                                "token": "id",
+                                "lexeme": "a"
+                               }
+                              ]
+                             }
+                            ]
+                           }
+                          ]
+                         },
+                         {
+                          "token": ">",
+                          "lexeme": ">"
+                         },
+                         {
+                          "name": "E",
+                          "children": [
+                           {
+                            "name": "E'",
+                            "children": [
+                             {
+                              "name": "E''",
+                              "children": [
+                               {
+                                "token": "num",
+                                "lexeme": "1"
+                               }
+                              ]
+                             }
+                            ]
+                           }
+                          ]
+                         }
+                        ]
+                       }
+                      ]
+                     }
+                    ]
+                   }
+                  ]
+                 },
+                 {
+                  "token": "}",
+                  "lexeme": "}"
                  }
                 ]
                }
@@ -102,325 +181,6 @@
            {
             "token": ".",
             "lexeme": "."
-           }
-          ]
-         },
-         {
-          "name": "D'",
-          "children": [
-           {
-            "name": "D",
-            "children": [
-             {
-              "token": "let",
-              "lexeme": "let"
-             },
-             {
-              "name": "T",
-              "children": [
-               {
-                "token": "int",
-                "lexeme": "int"
-               }
-              ]
-             },
-             {
-              "token": "id",
-              "lexeme": "numm"
-             },
-             {
-              "token": "be",
-              "lexeme": "be"
-             },
-             {
-              "name": "E",
-              "children": [
-               {
-                "name": "E'",
-                "children": [
-                 {
-                  "name": "E''",
-                  "children": [
-                   {
-                    "token": "num",
-                    "lexeme": "5"
-                   }
-                  ]
-                 }
-                ]
-               }
-              ]
-             },
-             {
-              "token": ".",
-              "lexeme": "."
-             }
-            ]
-           },
-           {
-            "name": "D'",
-            "children": [
-             {
-              "name": "D",
-              "children": [
-               {
-                "token": "let",
-                "lexeme": "let"
-               },
-               {
-                "name": "T",
-                "children": [
-                 {
-                  "token": "set",
-                  "lexeme": "set"
-                 }
-                ]
-               },
-               {
-                "token": "id",
-                "lexeme": "s"
-               },
-               {
-                "token": "be",
-                "lexeme": "be"
-               },
-               {
-                "name": "E",
-                "children": [
-                 {
-                  "name": "E'",
-                  "children": [
-                   {
-                    "name": "E''",
-                    "children": [
-                     {
-                      "token": "{",
-                      "lexeme": "{"
-                     },
-                     {
-                      "name": "Z",
-                      "children": [
-                       {
-                        "token": "id",
-                        "lexeme": "x"
-                       },
-                       {
-                        "token": ":",
-                        "lexeme": ":"
-                       }
-                      ]
-                     },
-                     {
-                      "name": "P",
-                      "children": [
-                       {
-                        "name": "P",
-                        "children": [
-                         {
-                          "name": "P",
-                          "children": [
-                           {
-                            "name": "P'",
-                            "children": [
-                             {
-                              "name": "P''",
-                              "children": [
-                               {
-                                "name": "R",
-                                "children": [
-                                 {
-                                  "name": "E",
-                                  "children": [
-                                   {
-                                    "name": "E'",
-                                    "children": [
-                                     {
-                                      "name": "E''",
-                                      "children": [
-                                       {
-                                        "token": "id",
-                                        "lexeme": "x"
-                                       }
-                                      ]
-                                     }
-                                    ]
-                                   }
-                                  ]
-                                 },
-                                 {
-                                  "token": "=",
-                                  "lexeme": "="
-                                 },
-                                 {
-                                  "name": "E",
-                                  "children": [
-                                   {
-                                    "name": "E'",
-                                    "children": [
-                                     {
-                                      "name": "E''",
-                                      "children": [
-                                       {
-                                        "token": "id",
-                                        "lexeme": "num"
-                                       }
-                                      ]
-                                     }
-                                    ]
-                                   }
-                                  ]
-                                 }
-                                ]
-                               }
-                              ]
-                             }
-                            ]
-                           }
-                          ]
-                         },
-                         {
-                          "token": "|",
-                          "lexeme": "|"
-                         },
-                         {
-                          "name": "P'",
-                          "children": [
-                           {
-                            "name": "P''",
-                            "children": [
-                             {
-                              "name": "R",
-                              "children": [
-                               {
-                                "name": "E",
-                                "children": [
-                                 {
-                                  "name": "E'",
-                                  "children": [
-                                   {
-                                    "name": "E''",
-                                    "children": [
-                                     {
-                                      "token": "id",
-                                      "lexeme": "x"
-                                     }
-                                    ]
-                                   }
-                                  ]
-                                 }
-                                ]
-                               },
-                               {
-                                "token": "=",
-                                "lexeme": "="
-                               },
-                               {
-                                "name": "E",
-                                "children": [
-                                 {
-                                  "name": "E'",
-                                  "children": [
-                                   {
-                                    "name": "E''",
-                                    "children": [
-                                     {
-                                      "token": "id",
-                                      "lexeme": "numn"
-                                     }
-                                    ]
-                                   }
-                                  ]
-                                 }
-                                ]
-                               }
-                              ]
-                             }
-                            ]
-                           }
-                          ]
-                         }
-                        ]
-                       },
-                       {
-                        "token": "|",
-                        "lexeme": "|"
-                       },
-                       {
-                        "name": "P'",
-                        "children": [
-                         {
-                          "name": "P''",
-                          "children": [
-                           {
-                            "name": "R",
-                            "children": [
-                             {
-                              "name": "E",
-                              "children": [
-                               {
-                                "name": "E'",
-                                "children": [
-                                 {
-                                  "name": "E''",
-                                  "children": [
-                                   {
-                                    "token": "id",
-                                    "lexeme": "x"
-                                   }
-                                  ]
-                                 }
-                                ]
-                               }
-                              ]
-                             },
-                             {
-                              "token": "=",
-                              "lexeme": "="
-                             },
-                             {
-                              "name": "E",
-                              "children": [
-                               {
-                                "name": "E'",
-                                "children": [
-                                 {
-                                  "name": "E''",
-                                  "children": [
-                                   {
-                                    "token": "id",
-                                    "lexeme": "numm"
-                                   }
-                                  ]
-                                 }
-                                ]
-                               }
-                              ]
-                             }
-                            ]
-                           }
-                          ]
-                         }
-                        ]
-                       }
-                      ]
-                     },
-                     {
-                      "token": "}",
-                      "lexeme": "}"
-                     }
-                    ]
-                   }
-                  ]
-                 }
-                ]
-               },
-               {
-                "token": ".",
-                "lexeme": "."
-               }
-              ]
-             }
-            ]
            }
           ]
          }
@@ -439,17 +199,60 @@
         "name": "A",
         "children": [
          {
-          "name": "E",
+          "name": "P",
           "children": [
            {
-            "name": "E'",
+            "name": "P'",
             "children": [
              {
-              "name": "E''",
+              "name": "P''",
               "children": [
                {
-                "token": "id",
-                "lexeme": "s"
+                "name": "R",
+                "children": [
+                 {
+                  "name": "E",
+                  "children": [
+                   {
+                    "name": "E'",
+                    "children": [
+                     {
+                      "name": "E''",
+                      "children": [
+                       {
+                        "token": "id",
+                        "lexeme": "x"
+                       }
+                      ]
+                     }
+                    ]
+                   }
+                  ]
+                 },
+                 {
+                  "token": "@",
+                  "lexeme": "@"
+                 },
+                 {
+                  "name": "E",
+                  "children": [
+                   {
+                    "name": "E'",
+                    "children": [
+                     {
+                      "name": "E''",
+                      "children": [
+                       {
+                        "token": "id",
+                        "lexeme": "y"
+                       }
+                      ]
+                     }
+                    ]
+                   }
+                  ]
+                 }
+                ]
                }
               ]
              }
