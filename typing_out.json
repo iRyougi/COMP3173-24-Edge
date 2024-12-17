@@ -16,21 +16,78 @@
                     "type": "calculation",
                     "children": [
                         {
-                            "name": "E",
-                            "type": "integer",
+                            "name": "P",
+                            "type": "predicate",
                             "children": [
                                 {
-                                    "name": "E'",
-                                    "type": "integer",
+                                    "name": "P'",
+                                    "type": "predicate",
                                     "children": [
                                         {
-                                            "name": "E''",
-                                            "type": "integer",
+                                            "name": "P''",
+                                            "type": "predicate",
                                             "children": [
                                                 {
-                                                    "token": "num",
-                                                    "lexeme": "3",
-                                                    "type": "integer"
+                                                    "token": "!",
+                                                    "lexeme": "!",
+                                                    "type": "void"
+                                                },
+                                                {
+                                                    "name": "R",
+                                                    "type": "relation",
+                                                    "children": [
+                                                        {
+                                                            "name": "E",
+                                                            "type": "integer",
+                                                            "children": [
+                                                                {
+                                                                    "name": "E'",
+                                                                    "type": "integer",
+                                                                    "children": [
+                                                                        {
+                                                                            "name": "E''",
+                                                                            "type": "integer",
+                                                                            "children": [
+                                                                                {
+                                                                                    "token": "num",
+                                                                                    "lexeme": "2",
+                                                                                    "type": "integer"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "token": ">",
+                                                            "lexeme": ">",
+                                                            "type": "void"
+                                                        },
+                                                        {
+                                                            "name": "E",
+                                                            "type": "integer",
+                                                            "children": [
+                                                                {
+                                                                    "name": "E'",
+                                                                    "type": "integer",
+                                                                    "children": [
+                                                                        {
+                                                                            "name": "E''",
+                                                                            "type": "integer",
+                                                                            "children": [
+                                                                                {
+                                                                                    "token": "num",
+                                                                                    "lexeme": "4",
+                                                                                    "type": "integer"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
                                                 }
                                             ]
                                         }

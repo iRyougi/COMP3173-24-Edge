@@ -4,8 +4,20 @@
     "lexeme": "show"
   },
   {
+    "token": "!",
+    "lexeme": "!"
+  },
+  {
     "token": "num",
-    "lexeme": "3"
+    "lexeme": "2"
+  },
+  {
+    "token": ">",
+    "lexeme": ">"
+  },
+  {
+    "token": "num",
+    "lexeme": "4"
   },
   {
     "token": ".",
