@@ -4,16 +4,12 @@
     "lexeme": "show"
   },
   {
-    "token": "!",
-    "lexeme": "!"
-  },
-  {
     "token": "num",
-    "lexeme": "2"
+    "lexeme": "3"
   },
   {
-    "token": ">",
-    "lexeme": ">"
+    "token": "*",
+    "lexeme": "*"
   },
   {
     "token": "num",

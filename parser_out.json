@@ -12,64 +12,35 @@
           "name": "A",
           "children": [
             {
-              "name": "P",
+              "name": "E",
               "children": [
                 {
-                  "name": "P'",
+                  "name": "E'",
                   "children": [
                     {
-                      "name": "P''",
+                      "name": "E'",
                       "children": [
                         {
-                          "token": "!",
-                          "lexeme": "!"
-                        },
-                        {
-                          "name": "R",
+                          "name": "E''",
                           "children": [
                             {
-                              "name": "E",
-                              "children": [
-                                {
-                                  "name": "E'",
-                                  "children": [
-                                    {
-                                      "name": "E''",
-                                      "children": [
-                                        {
-                                          "token": "num",
-                                          "lexeme": "2"
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            {
-                              "token": ">",
-                              "lexeme": ">"
-                            },
-                            {
-                              "name": "E",
-                              "children": [
-                                {
-                                  "name": "E'",
-                                  "children": [
-                                    {
-                                      "name": "E''",
-                                      "children": [
-                                        {
-                                          "token": "num",
-                                          "lexeme": "4"
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
+                              "token": "num",
+                              "lexeme": "3"
                             }
                           ]
+                        }
+                      ]
+                    },
+                    {
+                      "token": "*",
+                      "lexeme": "*"
+                    },
+                    {
+                      "name": "E''",
+                      "children": [
+                        {
+                          "token": "num",
+                          "lexeme": "4"
                         }
                       ]
                     }

@@ -112,7 +112,7 @@ class TypeChecker:
         elif node.token in ["&", "|", "!"]:
             node.type = "void"  # 修正为 "void" 而非 "predicate"
         elif node.token in ["U", "I", "+", "-", "*"]:
-            node.type = "operator"
+            node.type = "void"
         elif node.token in KEYWORDS:
             node.type = "void"
         elif node.token in PUNCTUATION:
@@ -260,18 +260,8 @@ class TypeChecker:
         print(f"Exiting _check_A, node type: {node.type}")
 
     def _check_E(self, node: ParseTreeNode):
-        # 规则 8: E -> E'
+        # 规则 9,10,11: E1 -> E2 U E' | E2 + E' | E2 - E' 
         print(f"Entering _check_E for node: {node.name}")
-        if len(node.children) == 1:
-            E_prime = node.children[0]
-            self._check_node(E_prime)
-            node.type = E_prime.type
-            print(f"Processed node E: type set to {node.type}")
-        print(f"Exiting _check_E, node type: {node.type}")
-
-    def _check_E1(self, node: ParseTreeNode):
-        # 规则 9,10,11,14: E1 -> E2 U E' | E2 + E' | E2 - E' | E2 * E'
-        print(f"Entering _check_E1 for node: {node.name}")
         if len(node.children) == 3:
             E2, op, E_prime = node.children
             self._check_node(E2)
@@ -291,18 +281,17 @@ class TypeChecker:
                     node.type = "type_error"
                     self.type_error_found = True
                     print(f"Type Error: E1 -> E2 {op.token} E' with incorrect types")
-            elif op.token == "*":
-                if E2.type == "integer" and E_prime.type == "integer":
-                    node.type = "integer"
-                else:
-                    node.type = "type_error"
-                    self.type_error_found = True
-                    print("Type Error: E1 -> E2 * E' with incorrect types")
             print(f"Processed node E1: type set to {node.type}")
-        print(f"Exiting _check_E1, node type: {node.type}")
+        # 规则 8: E -> E'
+        if len(node.children) == 1:
+            E_prime = node.children[0]
+            self._check_node(E_prime)
+            node.type = E_prime.type
+            print(f"Processed node E: type set to {node.type}")
+        print(f"Exiting _check_E, node type: {node.type}")
 
     def _check_E_prime(self, node: ParseTreeNode):
-        # 规则 12和13: E' -> E'' | E' I E''
+        # 规则 12, 13 和 14: E' -> E'' | E' I E'' | E' * E''
         print(f"Entering _check_E_prime for node: {node.name}")
         if len(node.children) == 1:
             E_double_prime = node.children[0]
@@ -310,15 +299,18 @@ class TypeChecker:
             node.type = E_double_prime.type
             print(f"Processed node E': single child, type set to {node.type}")
         elif len(node.children) == 3:
-            E_prime2, I_op, E_double_prime = node.children
+            E_prime2, op, E_double_prime = node.children
             self._check_node(E_prime2)
+            self._check_node(op) # ensure "*" is processed
             self._check_node(E_double_prime)
             if E_prime2.type == "set" and E_double_prime.type == "set":
                 node.type = "set"
+            elif E_prime2.type == "integer" and E_double_prime.type == "integer":
+                node.type = "integer"
             else:
                 node.type = "type_error"
                 self.type_error_found = True
-                print("Type Error: E' -> E' I E'' with incorrect types")
+                print("Type Error: E' -> E' I E'' or E'1 -> E'2 * E'' with incorrect types")
             print(f"Processed node E': type set to {node.type}")
         print(f"Exiting _check_E_prime, node type: {node.type}")
 
@@ -396,11 +388,8 @@ class TypeChecker:
             node.type = "type_error"
             self.type_error_found = True
             print(f"Type Error: P has unexpected number of children: {len(node.children)}")
-        print(f"Exiting _check_P, node type: {node.type}")
-
-    def _check_P1(self, node: ParseTreeNode):
+        
         # 规则 20: P1 -> P2 | P'
-        print(f"Entering _check_P1 for node: {node.name}")
         if len(node.children) == 3:
             P2, pipe, P_prime = node.children
             self._check_node(P2)
@@ -412,7 +401,8 @@ class TypeChecker:
                 self.type_error_found = True
                 print("Type Error: P1 -> P2 | P' with incorrect types")
             print(f"Processed node P1: type set to {node.type}")
-        print(f"Exiting _check_P1, node type: {node.type}")
+
+        print(f"Exiting _check_P, node type: {node.type}")
 
     def _check_P_prime(self, node: ParseTreeNode):
         # 规则 22和23: P' -> P'' | P' & P'' | P' | P''
