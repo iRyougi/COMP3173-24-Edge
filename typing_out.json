@@ -28,7 +28,7 @@
             },
             {
               "token": "id",
-              "lexeme": "x",
+              "lexeme": "a",
               "type": "void"
             },
             {
@@ -50,7 +50,7 @@
                       "children": [
                         {
                           "token": "num",
-                          "lexeme": "1",
+                          "lexeme": "5",
                           "type": "integer"
                         }
                       ]
@@ -81,18 +81,18 @@
                 },
                 {
                   "name": "T",
-                  "type": "set",
+                  "type": "integer",
                   "children": [
                     {
-                      "token": "set",
-                      "lexeme": "set",
+                      "token": "int",
+                      "lexeme": "int",
                       "type": "void"
                     }
                   ]
                 },
                 {
                   "token": "id",
-                  "lexeme": "y",
+                  "lexeme": "b",
                   "type": "void"
                 },
                 {
@@ -102,116 +102,20 @@
                 },
                 {
                   "name": "E",
-                  "type": "set",
+                  "type": "integer",
                   "children": [
                     {
                       "name": "E'",
-                      "type": "set",
+                      "type": "integer",
                       "children": [
                         {
                           "name": "E''",
-                          "type": "set",
+                          "type": "integer",
                           "children": [
                             {
-                              "token": "{",
-                              "lexeme": "{",
-                              "type": "void"
-                            },
-                            {
-                              "name": "Z",
-                              "type": "void",
-                              "children": [
-                                {
-                                  "token": "id",
-                                  "lexeme": "a",
-                                  "type": "void"
-                                },
-                                {
-                                  "token": ":",
-                                  "lexeme": ":",
-                                  "type": "void"
-                                }
-                              ]
-                            },
-                            {
-                              "name": "P",
-                              "type": "predicate",
-                              "children": [
-                                {
-                                  "name": "P'",
-                                  "type": "predicate",
-                                  "children": [
-                                    {
-                                      "name": "P''",
-                                      "type": "predicate",
-                                      "children": [
-                                        {
-                                          "name": "R",
-                                          "type": "relation",
-                                          "children": [
-                                            {
-                                              "name": "E",
-                                              "type": "integer",
-                                              "children": [
-                                                {
-                                                  "name": "E'",
-                                                  "type": "integer",
-                                                  "children": [
-                                                    {
-                                                      "name": "E''",
-                                                      "type": "integer",
-                                                      "children": [
-                                                        {
-                                                          "token": "id",
-                                                          "lexeme": "a",
-                                                          "type": "integer"
-                                                        }
-                                                      ]
-                                                    }
-                                                  ]
-                                                }
-                                              ]
-                                            },
-                                            {
-                                              "token": ">",
-                                              "lexeme": ">",
-                                              "type": "void"
-                                            },
-                                            {
-                                              "name": "E",
-                                              "type": "integer",
-                                              "children": [
-                                                {
-                                                  "name": "E'",
-                                                  "type": "integer",
-                                                  "children": [
-                                                    {
-                                                      "name": "E''",
-                                                      "type": "integer",
-                                                      "children": [
-                                                        {
-                                                          "token": "num",
-                                                          "lexeme": "1",
-                                                          "type": "integer"
-                                                        }
-                                                      ]
-                                                    }
-                                                  ]
-                                                }
-                                              ]
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            {
-                              "token": "}",
-                              "lexeme": "}",
-                              "type": "void"
+                              "token": "num",
+                              "lexeme": "3",
+                              "type": "integer"
                             }
                           ]
                         }
@@ -244,73 +148,49 @@
           "type": "calculation",
           "children": [
             {
-              "name": "P",
-              "type": "predicate",
+              "name": "E",
+              "type": "integer",
               "children": [
                 {
-                  "name": "P'",
-                  "type": "predicate",
+                  "name": "E",
+                  "type": "integer",
                   "children": [
                     {
-                      "name": "P''",
-                      "type": "predicate",
+                      "name": "E'",
+                      "type": "integer",
                       "children": [
                         {
-                          "name": "R",
-                          "type": "relation",
+                          "name": "E''",
+                          "type": "integer",
                           "children": [
                             {
-                              "name": "E",
-                              "type": "integer",
-                              "children": [
-                                {
-                                  "name": "E'",
-                                  "type": "integer",
-                                  "children": [
-                                    {
-                                      "name": "E''",
-                                      "type": "integer",
-                                      "children": [
-                                        {
-                                          "token": "id",
-                                          "lexeme": "x",
-                                          "type": "integer"
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            {
-                              "token": "@",
-                              "lexeme": "@",
-                              "type": "void"
-                            },
-                            {
-                              "name": "E",
-                              "type": "set",
-                              "children": [
-                                {
-                                  "name": "E'",
-                                  "type": "set",
-                                  "children": [
-                                    {
-                                      "name": "E''",
-                                      "type": "set",
-                                      "children": [
-                                        {
-                                          "token": "id",
-                                          "lexeme": "y",
-                                          "type": "set"
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
+                              "token": "id",
+                              "lexeme": "a",
+                              "type": "integer"
                             }
                           ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "token": "+",
+                  "lexeme": "+",
+                  "type": "void"
+                },
+                {
+                  "name": "E'",
+                  "type": "integer",
+                  "children": [
+                    {
+                      "name": "E''",
+                      "type": "integer",
+                      "children": [
+                        {
+                          "token": "id",
+                          "lexeme": "b",
+                          "type": "integer"
                         }
                       ]
                     }
