@@ -123,7 +123,7 @@ class TypeChecker:
         :param node: 当前 AST 节点（字典）
         :return: 节点类型字符串
         """
-
+        
         # 如果已经标记为 type_error，则直接返回
         if node.get("type", None) == TYPE_ERROR:
             return TYPE_ERROR
@@ -634,6 +634,7 @@ class TypeChecker:
     def handle_P(self, node: dict, children: list) -> str:
         """
         规则21: P -> P'
+        规则20: P1 -> P2 | P'
         """
         debug_log("handle_P called with children:")
         for idx, child in enumerate(children):
@@ -646,9 +647,32 @@ class TypeChecker:
             child_type = self.type_check_node(children[0])
             node["type"] = child_type
             debug_log(f"P -> P' => type = {child_type}")
+        elif len(children) == 3:
+            # P1 -> P2 | P'
+            p2_node = children[0]
+            op_node = children[1]
+            p_prime_node = children[2]
+
+            op = op_node["lexeme"]
+            p2_type = self.type_check_node(p2_node)
+            p_prime_type = self.type_check_node(p_prime_node)
+
+            if op == "|":
+                if p2_type == TYPE_PREDICATE and p_prime_type == TYPE_PREDICATE:
+                    node["type"] = TYPE_PREDICATE
+                    debug_log("P1 -> P2 | P' => type = predicate")
+                else:
+                    node["type"] = TYPE_ERROR
+                    debug_log("P1 -> P2 | P' type mismatch => type_error")
+                    self.type_error_flag = True
+            else:
+                # 未知操作符
+                node["type"] = TYPE_ERROR
+                debug_log(f"P1 -> unknown operator '{op}' => type_error")
+                self.type_error_flag = True
         else:
             node["type"] = TYPE_ERROR
-            debug_log("P production does not match rule21 => type_error")
+            debug_log("P production does not match rule 20 or 21 => type_error")
             self.type_error_flag = True
         return node["type"]
 
@@ -892,19 +916,19 @@ def main():
         # 加载 AST
         type_checker.load_ast()
         if type_checker.type_error_flag:
-            print("Type Error!")
+            print("Type Error! (1)")
         else:
             # 运行类型检查
             type_checker.type_check()
             if type_checker.type_error_flag:
-                print("Type Error!")
+                print("Type Error! (2)")
             else:
                 print("Semantic Analysis Complete!")
     except Exception as e:
         # 捕获任何未预见的异常
         debug_log(f"Unexpected error: {e}")
         type_checker.type_error_flag = True
-        print("Type Error!")
+        print("Type Error! (3)")
     finally:
         # 根据 type_error_flag 写出 typing_out.json
         type_checker.write_typing_json()
