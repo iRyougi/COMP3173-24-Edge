@@ -89,10 +89,15 @@ class TypeChecker:
             """递归地转换 AST 节点，包含 type 信息"""
             if "token" in node:
                 # 终结符
+                terminal_type = node.get("type") 
+                if (terminal_type in ["set", "integer"] and node["token"]=="id"): 
+                    terminal_type = TYPE_VOID 
+                else: terminal_type = terminal_type or TYPE_VOID
                 return {
                     "token": node["token"],
                     "lexeme": node["lexeme"],
-                    "type": node.get("type", TYPE_VOID)
+                    "type": terminal_type
+
                 }
             else:
                 # 非终结符
