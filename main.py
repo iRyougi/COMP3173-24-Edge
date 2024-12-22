@@ -6,8 +6,7 @@ from parser import (
     load_parsing_table,
 )  # Assuming parser.py and this file are in the same directory
 from type_checker import (
-    load_parse_tree,
-    type_check_with_error_handling,
+    TypeChecker,
 )  # 导入类型检查器功能
 
 
@@ -46,35 +45,34 @@ def main():
     parser.parse()
 
     # Step 3: 语义分析（类型检查）
-    # 加载解析树
-    parse_tree_root = load_parse_tree("parser_out.json")
-    if not parse_tree_root:
-        print("Failed to load parse tree.")
-        # 生成空的 typing_out.json 文件
-        with open("typing_out.json", "w") as f:
-            json.dump([], f)
-        return
+    # 假设文件路径如下，你可以根据实际情况修改
+    parser_out_path = "parser_out.json"
+    typing_out_path = "typing_out.json"
 
-    # 执行类型检查
-    type_check_success = type_check_with_error_handling(
-        parse_tree_root, "typing_out.json"
-    )
+    # 创建 TypeChecker 实例
+    type_checker = TypeChecker(parser_out_path, typing_out_path)
 
-    # 根据类型检查结果输出
-    if type_check_success:
-        # 如果类型检查成功，且已经在类型检查器中输出了 "Semantic Analysis Complete!"
-        pass
-    else:
-        # 如果类型检查失败，已经在类型检查器中输出了 "Type Error!"
-        pass
-
-    # 读取并打印 typing_out.json 内容
-    # try:
-    #     with open("typing_out.json", "r") as f:
-    #         typing_out = json.load(f)
-    #         print(json.dumps(typing_out, indent=4))
-    # except Exception as e:
-    #     print(f"Error reading typing_out.json: {e}")
+    try:
+        # 加载 AST
+        type_checker.load_ast()
+        if type_checker.type_error_flag:
+            print("Type Error!")
+        else:
+            # 运行类型检查
+            type_checker.type_check()
+            if type_checker.type_error_flag:
+                print("Type Error!")
+            else:
+                print("Semantic Analysis Complete!")
+    except Exception as e:
+        # 捕获任何未预见的异常
+        # debug_log(f"Unexpected error: {e}")
+        type_checker.type_error_flag = True
+        print("Type Error!")
+    finally:
+        # 根据 type_error_flag 写出 typing_out.json
+        type_checker.write_typing_json()
+        # debug_log("Type checking phase finished.")
 
 
 if __name__ == "__main__":

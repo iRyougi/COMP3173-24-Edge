@@ -230,5 +230,5 @@ class SLRParser:
 
     def output_json(self):
         with open("parser_out.json", "w") as f:
-            json.dump(self.syntax_tree, f, indent=2)
+            json.dump(self.syntax_tree, f, indent=2) #这里导致chaos输出不正确。参数有问题indent=2
             print("Syntactic Analysis Complete!")
