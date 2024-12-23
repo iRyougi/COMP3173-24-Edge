@@ -1,5 +1,5 @@
 # evaluator.py
-
+import re
 import json
 import sys
 
@@ -61,8 +61,24 @@ class Evaluator:
         """
         self.debug_print(f"Writing evaluation output to {self.evaluation_file}")
         try:
+            def convert_node(node: dict):
+                if "token" in node:
+                    # 终结符
+                    return {
+                        "token": node["token"],
+                        "lexeme": node["lexeme"],
+                        "value": str(node.get("value"))
+                    }
+                else:
+                    # 非终结符
+                    return {
+                        "name": node["name"],
+                        "value": str(node.get("value")),
+                        "children": [convert_node(child) for child in node.get("children", [])]
+                    }
+                # json.dump(convert_node(self.ast_root), f, indent=2, ensure_ascii=False)
             with open(self.evaluation_file, 'w') as f:
-                json.dump(self.parse_tree, f, indent=4)
+                json.dump(convert_node(self.parse_tree), f, indent=4)
             self.debug_print("Evaluation output written successfully.")
         except Exception as e:
             self.debug_print(f"Error writing to {self.evaluation_file}: {str(e)}")
@@ -107,6 +123,7 @@ class Evaluator:
         """
         node_type = node.get('type')
         node_name = node.get('name')
+        children = node.get("children", [])
 
         self.debug_print(f"Evaluating node: {node_name if node_name else 'terminal'} with type: {node_type}")
 
@@ -117,25 +134,25 @@ class Evaluator:
             self.debug_print(f"Processing terminal token: {token}, lexeme: {lexeme}")
 
             if token == 'num':
-                evaluation = lexeme  # 保持原有 value
+                evaluation = int(lexeme)  # 保持原有 value
                 node['value'] = lexeme  # 保持原有 value
                 self.debug_print(f"Number {lexeme} evaluated as {evaluation}")
             elif token == 'id':
-                var_name = lexeme
-                if var_name not in self.symbol_table:
-                    raise Exception(f"Undefined variable: {var_name}")
-                evaluation = self.symbol_table[var_name]['value']
-                node['value'] = evaluation  # 更新 value 为变量的值
-                self.debug_print(f"Identifier {var_name} evaluated as {evaluation}")
-            elif token in ['<', '>', '=', '@', '+', '-', '*', 'U', 'I', '&', '|', '!']:
+                if lexeme not in self.symbol_table:
+                    node['value'] = 'void'
+                    return lexeme
+                evaluation = self.symbol_table[lexeme]['value']
+                node['value'] = "void" 
+                self.debug_print(f"Identifier {lexeme} evaluated as {evaluation}")
+            elif token in ['<', '>', '=', '@', '+', '-', '*', 'U', 'I', '&', '|', '!', ':']:
                 # 操作符本身不需要评估，只是在操作中使用
                 evaluation = lexeme
-                node['value'] = lexeme
+                node['value'] = "void"
                 self.debug_print(f"Operator {lexeme} stored for evaluation.")
             else:
                 # 其他终端符号直接返回
                 evaluation = lexeme
-                node['value'] = lexeme
+                node['value'] = "void"
                 self.debug_print(f"Terminal {lexeme} evaluated as {evaluation}")
             return evaluation
 
@@ -146,12 +163,42 @@ class Evaluator:
             return None
 
         if node_name == 'S' and node_type == 'program':
-            # 处理根节点 S
+            # 处理根节点 S (program)
+            for child in node.get('children', []):
+                if (child.get('name')=="C"):
+                    result = self.evaluate_node(child)
+                else:
+                    self.evaluate_node(child)
+            node['value'] = result  # 根据理想输出设置
+            self.debug_print("Program node 'S' evaluated.")
+            return result
+
+        elif node_name == 'S' and node_type == 'calculation':
+            # 处理根节点 S (calculation)
+            for child in node.get('children', []):
+                if (child.get('name')=="C"):
+                    result = self.evaluate_node(child)
+                else:
+                    self.evaluate_node(child)
+            node['value'] = result
+            self.debug_print("Calculation node 'S' evaluated.")
+            return result
+        
+        elif node_name == 'T' and node_type == 'integer':
+            # 处理根节点 T
             for child in node.get('children', []):
                 self.evaluate_node(child)
-            node['value'] = "false"  # 根据理想输出设置
-            self.debug_print("Program node 'S' evaluated.")
-            return "false"
+            node['value'] = "void"  
+            self.debug_print("Integer node 'T' evaluated.")
+            return "void"
+        
+        elif node_name == 'T' and node_type == 'set':
+            # 处理根节点 T
+            for child in node.get('children', []):
+                self.evaluate_node(child)
+            node['value'] = "void"  
+            self.debug_print("set node 'T' evaluated.")
+            return "void"
 
         elif node_name == 'D\'' and node_type == 'declarations':
             # 处理声明列表 D'
@@ -163,11 +210,17 @@ class Evaluator:
 
         elif node_name == 'D' and node_type == 'declaration':
             # 处理单个声明 D
-            var_type = node['type_info']['var_type']
-            var_name = node['type_info']['var_name']
-            expr_node = node['children'][0]
+            var_type = node['children'][1]['children'][0].get('lexeme')
+            var_name = node['children'][2].get('lexeme')
+
             self.debug_print(f"Processing declaration: let {var_type} {var_name} be ...")
-            value = self.evaluate_node(expr_node)
+            counter = 0
+            for child in node.get('children', []):
+                if (counter == 4):
+                    value = self.evaluate_node(child)
+                else:
+                    self.evaluate_node(child)
+                counter = counter + 1
             self.debug_print(f"Expression evaluated to {value}")
 
             if var_type == 'int':
@@ -177,29 +230,28 @@ class Evaluator:
                 node['value'] = "void"  # 声明不返回具体值
                 self.debug_print(f"Declared integer variable '{var_name}' with value {value}.")
             elif var_type == 'set':
-                if not isinstance(value, set):
-                    raise Exception(f"Type mismatch: Variable '{var_name}' expected to be set.")
+                
                 self.symbol_table[var_name] = {'type': 'set', 'value': value}
                 node['value'] = "void"  # 声明不返回具体值
                 self.debug_print(f"Declared set variable '{var_name}' with value {value}.")
             else:
                 raise Exception(f"Unknown type for variable '{var_name}': {var_type}")
-            return value
 
         elif node_name == 'C' and node_type == 'calculation':
             # 处理计算节点 C
-            for child in node.get('children', []):
-                self.evaluate_node(child)
-            node['value'] = "false"  # 根据理想输出设置
+            child = node.get('children', [])
+            self.evaluate_node(child[0])
+            result = self.evaluate_node(child[1])
+            node['value'] = result  # 根据理想输出设置
             self.debug_print("Calculation node 'C' evaluated.")
-            return "false"
+            return result
 
         elif node_name == 'show' and node_type == 'calculation':
             # 处理 show 语句
             expr_node = node['children'][0]
             self.debug_print("Processing 'show' statement.")
             result = self.evaluate_node(expr_node)
-            node['value'] = result  # 更新 value 为 show 的结果
+            node['value'] = "void"  # 更新 value 为 show 的结果
             self.evaluation_result = result
             self.debug_print(f"'show' statement evaluated to {result}")
             return result
@@ -219,22 +271,16 @@ class Evaluator:
         elif node_name == 'A' and node_type == 'calculation':
             # 处理计算节点 A
             result = self.evaluate_calculation(node)
-            node['value'] = "false"  # 根据理想输出设置
-            return "false"
-
-        elif node_name == 'E\'' and node_type == 'integer':
-            # 处理表达式节点 E'
-            result = self.evaluate_expression(node)
-            node['value'] = result
+            node['value'] = result  # 根据理想输出设置
             return result
-
-        elif node_name == 'Z' and node_type is None:
+       
+        elif node_name == 'Z' and node_type == 'void':
             # 处理集合变量 Z
-            # 根据理想输出，Z 的 value 是变量名，如 "a"
-            var_name = node['children'][0]['lexeme']
-            node['value'] = var_name
-            self.debug_print(f"Set variable 'Z' evaluated to {var_name}")
-            return var_name
+            self.evaluate_node(children[1])
+            self.evaluate_node(children[0])
+            node['value'] = children[0]['lexeme']
+            self.debug_print(f"Set variable 'Z' evaluated to {'void'}")
+            return node['value']
 
         else:
             self.debug_print(f"Unknown non-terminal node: {node_name}, skipping evaluation.")
@@ -256,91 +302,123 @@ class Evaluator:
 
         self.debug_print(f"Evaluating expression node: {name}")
 
-        if name == 'E' and node.get('type') == 'integer':
+        if name == 'E\'':
+            # 处理整数表达式
+            child = children[0]
+            if not children:
+                raise Exception("Invalid integer expression.")
+            if len(children) == 1:
+                result = self.evaluate_expression(child)
+                node['value'] = result
+            elif len(children) == 3 and node.get('type') == 'integer':    
+                left = self.evaluate_expression(children[0])
+                operator = children[1]['lexeme']
+                self.evaluate_node(children[1])
+                right = self.evaluate_expression(children[2])
+
+                self.debug_print(f"Evaluating integer expression: {left} {operator} {right}")
+
+                if operator == '+':
+                    result = left + right
+                elif operator == '-':
+                    result = left - right
+                elif operator == '*':
+                    result = left * right
+                else:
+                    raise Exception(f"Unsupported operator in integer expression: {operator}")
+                node['value'] = result
+            elif node.get('type') == 'set':
+                left = self.evaluate_expression(children[0])
+                self.evaluate_node(children[1])
+                right = self.evaluate_expression(children[2])
+                result = left + ' I ' + right
+                node['value'] = result
+            else:
+                raise Exception(f"E' Error : {len(children)}")
+            return result
+        
+
+            
+        elif name == 'E\'\'' and node.get('type') == 'integer':
             # 处理整数表达式
             if not children:
                 raise Exception("Invalid integer expression.")
             child = children[0]
             if child['token'] == 'num':
-                result = int(child['lexeme'])
-                self.debug_print(f"Integer expression evaluated to {result}")
+                result = self.evaluate_node(child)
+                node['value'] = result
                 return result
             elif child['token'] == 'id':
-                var_name = child['lexeme']
-                if var_name not in self.symbol_table:
-                    raise Exception(f"Undefined variable: {var_name}")
-                result = self.symbol_table[var_name]['value']
-                self.debug_print(f"Integer expression variable '{var_name}' evaluated to {result}")
+                result = self.evaluate_node(child)
+                node['value'] = result
                 return result
             else:
                 raise Exception(f"Unsupported token in integer expression: {child['token']}")
 
-        elif name == 'E' and node.get('type') == 'set':
+        elif name == 'E\'\'' and node.get('type') == 'set':
             # 处理集合表达式
             if not children:
                 raise Exception("Invalid set expression.")
-            child = children[0]
-            if child['name'] == 'set_definition':
-                result = self.evaluate_set_definition(child)
-                self.debug_print(f"Set expression evaluated to {result}")
+            if len(children) == 1:
+                result = self.evaluate_node(children[0])
+                node['value'] = result
                 return result
-            elif child['token'] == 'id':
-                var_name = child['lexeme']
-                if var_name not in self.symbol_table:
-                    raise Exception(f"Undefined set variable: {var_name}")
-                result = self.symbol_table[var_name]['value']
-                self.debug_print(f"Set expression variable '{var_name}' evaluated to {result}")
+            elif len(children) == 4:
+                self.evaluate_node(children[0])
+                variable = self.evaluate_node(children[1])
+                result = self.evaluate_predicate(children[2])
+                self.evaluate_node(children[3])
+                self.debug_print(f"Set expression evaluated to {result}")
+                if variable in result:
+                    result = '{ ' + variable + ': '+ result + ' }'
+                node['value'] = result
+                self.debug_print(f"Set expression variable '{variable}' evaluated as {result}")
                 return result
             else:
                 raise Exception(f"Unsupported token in set expression: {child['token']}")
 
-        elif name == 'E\'' and node.get('type') == 'integer':
+        elif name == 'E' and node.get('type') == 'integer':
             # 处理更复杂的整数表达式
             # 具体实现取决于语法树结构
             # 示例：简单的算术运算
-            if len(children) != 3:
-                raise Exception("Unsupported integer expression structure.")
-            left = self.get_evaluation(children[0])
-            operator = children[1]['lexeme']
-            right = self.get_evaluation(children[2])
+            child = children[0]
+            if len(children) == 1:
+                result = self.evaluate_expression(child)
+                node['value'] = result
+            elif len(children) == 3:    
+                left = self.evaluate_expression(children[0])
+                operator = children[1]['lexeme']
+                self.evaluate_node(children[1])
+                right = self.evaluate_expression(children[2])
 
-            self.debug_print(f"Evaluating integer expression: {left} {operator} {right}")
+                self.debug_print(f"Evaluating integer expression: {left} {operator} {right}")
 
-            if operator == '+':
-                result = left + right
-            elif operator == '-':
-                result = left - right
-            elif operator == '*':
-                result = left * right
-            else:
-                raise Exception(f"Unsupported operator in integer expression: {operator}")
-
+                if operator == '+':
+                    result = left + right
+                elif operator == '-':
+                    result = left - right
+                elif operator == '*':
+                    result = left * right
+                else:
+                    raise Exception(f"Unsupported operator in integer expression: {operator}")
+                node['value'] = result
             self.debug_print(f"Integer expression evaluated to {result}")
             return result
 
-        elif name == 'E\'' and node.get('type') == 'set':
+        elif name == 'E' and node.get('type') == 'set':
             # 处理更复杂的集合表达式
             # 具体实现取决于语法树结构
             # 示例：集合并集 U 和交集 I
-            if len(children) != 3:
-                raise Exception("Unsupported set expression structure.")
-            left = self.get_evaluation(children[0])
-            operator = children[1]['lexeme']
-            right = self.get_evaluation(children[2])
-
-            self.debug_print(f"Evaluating set expression: {left} {operator} {right}")
-
-            if operator == 'U':
-                if not isinstance(left, set) or not isinstance(right, set):
-                    raise Exception("Set operators require both operands to be sets.")
-                result = left.union(right)
-            elif operator == 'I':
-                if not isinstance(left, set) or not isinstance(right, set):
-                    raise Exception("Set operators require both operands to be sets.")
-                result = left.intersection(right)
-            else:
-                raise Exception(f"Unsupported operator in set expression: {operator}")
-
+            child = children[0]
+            if len(children) == 1:
+                result = self.evaluate_expression(child)
+                node['value'] = result
+            elif len(children) == 3:  
+                left = self.evaluate_expression(children[0])
+                self.evaluate_node(children[1])
+                right = self.evaluate_expression(children[2])
+                result = left + ' U ' + right
+                node['value'] = result
             self.debug_print(f"Set expression evaluated to {result}")
             return result
 
@@ -349,29 +427,72 @@ class Evaluator:
 
     def evaluate_predicate(self, node):
         """
-        处理谓词节点的评估。
-
-        参数：
-            node (dict): 谓词节点。
-
-        返回：
-            评估结果。
+        
         """
         name = node.get('name')
         children = node.get('children', [])
 
         self.debug_print(f"Evaluating predicate node: {name}")
 
-        if name in ['P', "P'", "P''"]:
-            # 处理谓词逻辑，例如 "a > 1"
-            if not children:
-                raise Exception("Invalid predicate structure.")
-            relation_node = children[0]
-            relation_result = self.evaluate_relation(relation_node)
-            self.debug_print(f"Predicate evaluated to {relation_result}")
-            return relation_result
+        if name == 'P':
+            if len(children) == 1:
+                result = self.evaluate_predicate(children[0])
+                node['value'] = result
+            elif len(children) == 3:    
+                left = self.evaluate_predicate(children[0])
+                operator = children[1]['lexeme']
+                self.evaluate_node(children[1])
+                right = self.evaluate_predicate(children[2])
+
+                self.debug_print(f"Evaluating predicate expression: {left} {operator} {right}")
+
+                if operator == '|':
+                    result = '(' + left + ' | ' + right + ')'
+                else:
+                    raise Exception(f"Unsupported operator in predicate expression: {operator}")
+                node['value'] = result
+            self.debug_print(f"predicate expression evaluated to {result}")
+            return result
+        
+        elif name == 'P\'':
+            if len(children) == 1:
+                result = self.evaluate_predicate(children[0])
+                node['value'] = result
+            elif len(children) == 3:    
+                left = self.evaluate_predicate(children[0])
+                operator = children[1]['lexeme']
+                self.evaluate_node(children[1])
+                right = self.evaluate_predicate(children[2])
+
+                self.debug_print(f"Evaluating predicate expression: {left} {operator} {right}")
+
+                if operator == '&':
+                    result = '(' + left + ' & ' + right + ')'
+                else:
+                    raise Exception(f"Unsupported operator in predicate expression: {operator}")
+                node['value'] = result
+            self.debug_print(f"predicate expression evaluated to {result}")
+            return result
+
+        elif name == 'P\'\'':
+            if len(children) == 1:
+                result = self.evaluate_relation(children[0])
+                node['value'] = result
+            elif len(children) == 2:
+                left = self.evaluate_node(children[0])
+                right = self.evaluate_relation(children[1])
+                self.debug_print(f"Evaluating predicate expression: {left}{right}")
+                if left == "!":
+                    result =  left + ' ' + right
+                else:
+                    raise Exception(f"Unsupported operator in predicate expression: {left}")
+                node['value'] = result
+            self.debug_print(f"predicate expression evaluated to {result}")
+            return result
+
         else:
             raise Exception(f"Unsupported predicate node: {name}")
+        
 
     def evaluate_relation(self, node):
         """
@@ -394,35 +515,14 @@ class Evaluator:
         operator = children[1]['lexeme']
         right_expr = children[2]
 
-        left_val = self.get_evaluation(left_expr)
-        right_val = self.get_evaluation(right_expr)
+        left = self.evaluate_expression(left_expr)
+        middle = self.evaluate_node(children[1])
+        right = self.evaluate_expression(right_expr)
 
-        self.debug_print(f"Evaluating relation: {left_val} {operator} {right_val}")
-
-        if isinstance(left_val, str) and left_val.isdigit():
-            left_val = int(left_val)
-        if isinstance(right_val, str) and right_val.isdigit():
-            right_val = int(right_val)
-
-        if operator == '>':
-            result = left_val > right_val
-        elif operator == '<':
-            result = left_val < right_val
-        elif operator == '=':
-            result = left_val == right_val
-        elif operator == '@':
-            # 示例：集合操作
-            if operator == '@':
-                if not isinstance(left_val, set) or not isinstance(right_val, set):
-                    raise Exception("Operator '@' requires both operands to be sets.")
-                result = left_val.issuperset(right_val)
-            else:
-                raise Exception(f"Unsupported operator: {operator}")
-        else:
-            raise Exception(f"Unsupported operator in relation: {operator}")
-
-        self.debug_print(f"Relation evaluated to {result}")
+        result = str(left) + ' ' + operator + ' ' + str(right)
+        node['value'] = result
         return result
+        
 
     def evaluate_calculation(self, node):
         """
@@ -437,10 +537,90 @@ class Evaluator:
         # 处理计算节点
         children = node.get('children', [])
         self.debug_print("Evaluating calculation node.")
-        if len(children) == 1:
-            result = self.get_evaluation(children[0])
+        if (children[0]['name']=="E"):
+            result = self.evaluate_expression(children[0])
             self.debug_print(f"Calculation evaluated to {result}")
             return result
+        elif (children[0]['name']=="P"):
+            result = self.evaluate_predicate(children[0])
+
+            def evaluate_condition(value, condition):
+                try:
+                    condition = condition.replace('x', str(value))
+                    print(f"Evaluating: {condition} with value: {value}")
+                    return eval(condition)
+                except SyntaxError as e:
+                    print(f"Syntax error in condition: {condition}")
+                    raise e
+
+            def split_outside_braces(expression, delimiter):
+                parts = []
+                current = []
+                stack = 0  
+                i = 0
+                while i < len(expression):
+                    char = expression[i]
+                    if char == '{':
+                        stack += 1
+                    elif char == '}':
+                        stack -= 1
+                    if stack == 0 and expression[i:i+len(delimiter)] == delimiter:
+                        parts.append(''.join(current).strip())
+                        current = []
+                        i += len(delimiter)  
+                    else:
+                        current.append(char)
+                        i += 1
+                parts.append(''.join(current).strip())
+                return parts
+
+            def convert_to_x(expression):
+                transformed_expression = re.sub(r'\b[a-zA-Z]+\b', 'x', expression)
+                return transformed_expression
+
+            def convert_and_evaluate(expression, variables):
+                print(f"Original expression: {expression}")
+                expression = convert_to_x(expression)
+
+                expression = expression.replace('!', ' not ')
+                expression = expression.replace('|', ' or ')
+                expression = expression.replace('&', ' and ')
+                expression = expression.replace('@', ' in ')
+                expression = expression.replace('=', '==')
+             
+                expression = expression.replace('(', '').replace(')', '')
+
+
+                def eval_part(part):
+                    if " in " in part:
+                        sub_parts_in = part.split(" in ")
+                        value = eval(sub_parts_in[0].strip(), {}, variables)
+                        condition_str = sub_parts_in[1].strip()
+                        if condition_str.startswith("{") and condition_str.endswith("}"):
+                            condition_str = condition_str[1:-1].strip()
+                            condition = condition_str.split(":")[1].strip()
+                            return evaluate_condition(value, condition)
+                        else:
+                            return eval(part, {}, variables)
+                    else:
+                        return eval(part, {}, variables)
+                
+                parts_or = split_outside_braces(expression, ' or ')               
+                results = []
+                for part_or in parts_or:
+                    parts_and = split_outside_braces(part_or, ' and ')
+                    sub_results = [eval_part(part_and) for part_and in parts_and]
+                    results.append(all(sub_results))
+                final_result = any(results)
+                return final_result
+            variables = {}
+
+            try: 
+                result = convert_and_evaluate(result, variables)
+                result = str(result).lower() 
+                return result 
+            except Exception as e: 
+                return f"Error evaluating expression: {e}"
         else:
             raise Exception("Invalid calculation node.")
 
