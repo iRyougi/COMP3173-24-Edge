@@ -5,10 +5,8 @@ from parser import (
     SLRParser,
     load_parsing_table,
 )  # Assuming parser.py and this file are in the same directory
-from type_checker import (
-    TypeChecker,
-)  # 导入类型检查器功能
-
+from type_checker import TypeChecker
+from evaluator import Evaluator  # 导入评估器功能
 
 def main():
     # 设置命令行参数解析器
@@ -73,6 +71,17 @@ def main():
         # 根据 type_error_flag 写出 typing_out.json
         type_checker.write_typing_json()
         # debug_log("Type checking phase finished.")
+
+    # Step 4: 语义分析中的评估部分
+    if not type_checker.type_error_flag:
+        evaluator = Evaluator()
+        evaluator.enable_debug()  # 启用调试信息
+        evaluator.evaluate()
+    else:
+        # 创建空的evaluation_out.json
+        with open('evaluation_out.json', 'w') as f:
+            json.dump({}, f)
+        print("Evaluation Skipped due to Type Error.")
 
 
 if __name__ == "__main__":

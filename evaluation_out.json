@@ -1,0 +1,493 @@
+{
+    "name": "S",
+    "value": "true",
+    "children": [
+        {
+            "name": "D'",
+            "value": "void",
+            "children": [
+                {
+                    "name": "D",
+                    "value": "void",
+                    "children": [
+                        {
+                            "token": "let",
+                            "lexeme": "let",
+                            "value": "void"
+                        },
+                        {
+                            "name": "T",
+                            "value": "void",
+                            "children": [
+                                {
+                                    "token": "int",
+                                    "lexeme": "int",
+                                    "value": "void"
+                                }
+                            ]
+                        },
+                        {
+                            "token": "id",
+                            "lexeme": "x",
+                            "value": "void"
+                        },
+                        {
+                            "token": "be",
+                            "lexeme": "be",
+                            "value": "void"
+                        },
+                        {
+                            "name": "E",
+                            "value": "3",
+                            "children": [
+                                {
+                                    "name": "E'",
+                                    "value": "3",
+                                    "children": [
+                                        {
+                                            "name": "E''",
+                                            "value": "3",
+                                            "children": [
+                                                {
+                                                    "token": "num",
+                                                    "lexeme": "3",
+                                                    "value": "3"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "token": ".",
+                            "lexeme": ".",
+                            "value": "void"
+                        }
+                    ]
+                },
+                {
+                    "name": "D'",
+                    "value": "void",
+                    "children": [
+                        {
+                            "name": "D",
+                            "value": "void",
+                            "children": [
+                                {
+                                    "token": "let",
+                                    "lexeme": "let",
+                                    "value": "void"
+                                },
+                                {
+                                    "name": "T",
+                                    "value": "void",
+                                    "children": [
+                                        {
+                                            "token": "set",
+                                            "lexeme": "set",
+                                            "value": "void"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "token": "id",
+                                    "lexeme": "y",
+                                    "value": "void"
+                                },
+                                {
+                                    "token": "be",
+                                    "lexeme": "be",
+                                    "value": "void"
+                                },
+                                {
+                                    "name": "E",
+                                    "value": "{ a: a > 3 }",
+                                    "children": [
+                                        {
+                                            "name": "E'",
+                                            "value": "{ a: a > 3 }",
+                                            "children": [
+                                                {
+                                                    "name": "E''",
+                                                    "value": "{ a: a > 3 }",
+                                                    "children": [
+                                                        {
+                                                            "token": "{",
+                                                            "lexeme": "{",
+                                                            "value": "void"
+                                                        },
+                                                        {
+                                                            "name": "Z",
+                                                            "value": "a",
+                                                            "children": [
+                                                                {
+                                                                    "token": "id",
+                                                                    "lexeme": "a",
+                                                                    "value": "void"
+                                                                },
+                                                                {
+                                                                    "token": ":",
+                                                                    "lexeme": ":",
+                                                                    "value": "void"
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "name": "P",
+                                                            "value": "a > 3",
+                                                            "children": [
+                                                                {
+                                                                    "name": "P'",
+                                                                    "value": "a > 3",
+                                                                    "children": [
+                                                                        {
+                                                                            "name": "P''",
+                                                                            "value": "a > 3",
+                                                                            "children": [
+                                                                                {
+                                                                                    "name": "R",
+                                                                                    "value": "a > 3",
+                                                                                    "children": [
+                                                                                        {
+                                                                                            "name": "E",
+                                                                                            "value": "a",
+                                                                                            "children": [
+                                                                                                {
+                                                                                                    "name": "E'",
+                                                                                                    "value": "a",
+                                                                                                    "children": [
+                                                                                                        {
+                                                                                                            "name": "E''",
+                                                                                                            "value": "a",
+                                                                                                            "children": [
+                                                                                                                {
+                                                                                                                    "token": "id",
+                                                                                                                    "lexeme": "a",
+                                                                                                                    "value": "void"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                }
+                                                                                            ]
+                                                                                        },
+                                                                                        {
+                                                                                            "token": ">",
+                                                                                            "lexeme": ">",
+                                                                                            "value": "void"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "E",
+                                                                                            "value": "3",
+                                                                                            "children": [
+                                                                                                {
+                                                                                                    "name": "E'",
+                                                                                                    "value": "3",
+                                                                                                    "children": [
+                                                                                                        {
+                                                                                                            "name": "E''",
+                                                                                                            "value": "3",
+                                                                                                            "children": [
+                                                                                                                {
+                                                                                                                    "token": "num",
+                                                                                                                    "lexeme": "3",
+                                                                                                                    "value": "3"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                }
+                                                                                            ]
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "token": "}",
+                                                            "lexeme": "}",
+                                                            "value": "void"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "token": ".",
+                                    "lexeme": ".",
+                                    "value": "void"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "D'",
+                            "value": "void",
+                            "children": [
+                                {
+                                    "name": "D",
+                                    "value": "void",
+                                    "children": [
+                                        {
+                                            "token": "let",
+                                            "lexeme": "let",
+                                            "value": "void"
+                                        },
+                                        {
+                                            "name": "T",
+                                            "value": "void",
+                                            "children": [
+                                                {
+                                                    "token": "set",
+                                                    "lexeme": "set",
+                                                    "value": "void"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "token": "id",
+                                            "lexeme": "s",
+                                            "value": "void"
+                                        },
+                                        {
+                                            "token": "be",
+                                            "lexeme": "be",
+                                            "value": "void"
+                                        },
+                                        {
+                                            "name": "E",
+                                            "value": "{ a: a < 5 }",
+                                            "children": [
+                                                {
+                                                    "name": "E'",
+                                                    "value": "{ a: a < 5 }",
+                                                    "children": [
+                                                        {
+                                                            "name": "E''",
+                                                            "value": "{ a: a < 5 }",
+                                                            "children": [
+                                                                {
+                                                                    "token": "{",
+                                                                    "lexeme": "{",
+                                                                    "value": "void"
+                                                                },
+                                                                {
+                                                                    "name": "Z",
+                                                                    "value": "a",
+                                                                    "children": [
+                                                                        {
+                                                                            "token": "id",
+                                                                            "lexeme": "a",
+                                                                            "value": "void"
+                                                                        },
+                                                                        {
+                                                                            "token": ":",
+                                                                            "lexeme": ":",
+                                                                            "value": "void"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "name": "P",
+                                                                    "value": "a < 5",
+                                                                    "children": [
+                                                                        {
+                                                                            "name": "P'",
+                                                                            "value": "a < 5",
+                                                                            "children": [
+                                                                                {
+                                                                                    "name": "P''",
+                                                                                    "value": "a < 5",
+                                                                                    "children": [
+                                                                                        {
+                                                                                            "name": "R",
+                                                                                            "value": "a < 5",
+                                                                                            "children": [
+                                                                                                {
+                                                                                                    "name": "E",
+                                                                                                    "value": "a",
+                                                                                                    "children": [
+                                                                                                        {
+                                                                                                            "name": "E'",
+                                                                                                            "value": "a",
+                                                                                                            "children": [
+                                                                                                                {
+                                                                                                                    "name": "E''",
+                                                                                                                    "value": "a",
+                                                                                                                    "children": [
+                                                                                                                        {
+                                                                                                                            "token": "id",
+                                                                                                                            "lexeme": "a",
+                                                                                                                            "value": "void"
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                },
+                                                                                                {
+                                                                                                    "token": "<",
+                                                                                                    "lexeme": "<",
+                                                                                                    "value": "void"
+                                                                                                },
+                                                                                                {
+                                                                                                    "name": "E",
+                                                                                                    "value": "5",
+                                                                                                    "children": [
+                                                                                                        {
+                                                                                                            "name": "E'",
+                                                                                                            "value": "5",
+                                                                                                            "children": [
+                                                                                                                {
+                                                                                                                    "name": "E''",
+                                                                                                                    "value": "5",
+                                                                                                                    "children": [
+                                                                                                                        {
+                                                                                                                            "token": "num",
+                                                                                                                            "lexeme": "5",
+                                                                                                                            "value": "5"
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                }
+                                                                                            ]
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "token": "}",
+                                                                    "lexeme": "}",
+                                                                    "value": "void"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "token": ".",
+                                            "lexeme": ".",
+                                            "value": "void"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "C",
+            "value": "true",
+            "children": [
+                {
+                    "token": "show",
+                    "lexeme": "show",
+                    "value": "void"
+                },
+                {
+                    "name": "A",
+                    "value": "true",
+                    "children": [
+                        {
+                            "name": "P",
+                            "value": "3 @ { a: a < 5 }",
+                            "children": [
+                                {
+                                    "name": "P'",
+                                    "value": "3 @ { a: a < 5 }",
+                                    "children": [
+                                        {
+                                            "name": "P''",
+                                            "value": "3 @ { a: a < 5 }",
+                                            "children": [
+                                                {
+                                                    "name": "R",
+                                                    "value": "3 @ { a: a < 5 }",
+                                                    "children": [
+                                                        {
+                                                            "name": "E",
+                                                            "value": "3",
+                                                            "children": [
+                                                                {
+                                                                    "name": "E'",
+                                                                    "value": "3",
+                                                                    "children": [
+                                                                        {
+                                                                            "name": "E''",
+                                                                            "value": "3",
+                                                                            "children": [
+                                                                                {
+                                                                                    "token": "id",
+                                                                                    "lexeme": "x",
+                                                                                    "value": "void"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "token": "@",
+                                                            "lexeme": "@",
+                                                            "value": "void"
+                                                        },
+                                                        {
+                                                            "name": "E",
+                                                            "value": "{ a: a < 5 }",
+                                                            "children": [
+                                                                {
+                                                                    "name": "E'",
+                                                                    "value": "{ a: a < 5 }",
+                                                                    "children": [
+                                                                        {
+                                                                            "name": "E''",
+                                                                            "value": "{ a: a < 5 }",
+                                                                            "children": [
+                                                                                {
+                                                                                    "token": "id",
+                                                                                    "lexeme": "s",
+                                                                                    "value": "void"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "token": ".",
+            "lexeme": ".",
+            "value": "void"
+        }
+    ]
+}
